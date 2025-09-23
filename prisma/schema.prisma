@@ -1,0 +1,85 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id       String  @id @default(cuid())
+  name     String?
+  email    String  @unique
+  password String
+}
+
+model Property {
+  id          String   @id @default(cuid())
+  name        String
+  title       String
+  description String?
+  phone       String?
+  ranking     Int?
+
+  location      String?
+  locationNotes String?
+  beach         String?
+
+  guests       Int
+  bedrooms     Int
+  beds         Int
+  amenities    String?
+  extraGuestFee Float?
+
+  // Configuração de camas
+  crib            Int?   // berço
+  childBed        Int?   // cama de criança
+  doubleBed       Int?   // cama de casal
+  foldingBed      Int?   // cama desmontável
+  kingBed         Int?   // cama king-size
+  mezzanineBed    Int?   // cama mezanino
+  queenBed        Int?   // cama queen-size
+  sofaBed         Int?   // sofá-cama
+  singleBed       Int?   // cama individual
+
+  lowSeason   Float
+  holidays    Float
+  christmas   Float
+  newYear     Float
+  carnival    Float
+  active      Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  reservations Reservation[]
+}
+
+model Reservation {
+  id         String   @id @default(cuid())
+  guestName  String
+  contactPhone String?
+  origin     String?
+  guestCount Int?
+
+  checkIn    DateTime
+  checkOut   DateTime
+  totalValue Float
+  notes      String?
+
+  paymentMethod           String?
+  paymentStatus           String?
+  secondInstallmentDate   DateTime?
+  thirdInstallmentDate    DateTime?
+  commissionTotal         Float?
+  commissionStatusJoao    String?
+  commissionStatusMateus  String?
+
+  propertyId String
+  property   Property @relation(fields: [propertyId], references: [id])
+
+  canceled Boolean @default(false)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
