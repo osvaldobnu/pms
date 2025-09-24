@@ -5,9 +5,7 @@
   "scripts": {
     "dev": "next dev --turbopack",
     "build": "next build --turbopack",
-    "start": "sh ./scripts/start-with-migrate.sh",
-    "migrate": "prisma migrate deploy"
-    "start-with-migrate": "sh ./scripts/start-with-migrate.sh",
+    "start": "next start",
     "lint": "eslint"
   },
   "dependencies": {
