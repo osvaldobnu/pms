@@ -6,7 +6,7 @@
     "dev": "next dev --turbopack",
     "build": "next build --turbopack",
     "migrate": "prisma migrate deploy",
-    "start": "npm run migrate && next start -p $PORT"
+    "start": "npm run migrate && next start -p $PORT",
     "lint": "eslint"
   },
   "dependencies": {
