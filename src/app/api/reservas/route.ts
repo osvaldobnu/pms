@@ -25,7 +25,6 @@ export async function POST(req: Request) {
         guestCount: body.guestCount ?? null, // NOVO
         contactPhone: body.contactPhone || null,
         origin: body.origin || null,
-        guestCount: body.guestCount ?? null,
 
         checkIn: new Date(body.checkIn),
         checkOut: new Date(body.checkOut),
