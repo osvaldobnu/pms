@@ -17,6 +17,17 @@ export interface PropertyForm {
   amenities?: string;
   extraGuestFee?: string;
 
+  // novos campos de camas
+  crib?: string;
+  childBed?: string;
+  doubleBed?: string;
+  foldingBed?: string;
+  kingBed?: string;
+  mezzanineBed?: string;
+  queenBed?: string;
+  sofaBed?: string;
+  singleBed?: string;
+
   lowSeason: string;
   holidays: string;
   christmas: string;
@@ -41,6 +52,17 @@ export interface PropertyData {
   beds: number;
   amenities?: string;
   extraGuestFee?: number;
+
+  // novos campos de camas
+  crib?: number;
+  childBed?: number;
+  doubleBed?: number;
+  foldingBed?: number;
+  kingBed?: number;
+  mezzanineBed?: number;
+  queenBed?: number;
+  sofaBed?: number;
+  singleBed?: number;
 
   lowSeason: number;
   holidays: number;
