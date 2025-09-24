@@ -6,7 +6,7 @@
     "dev": "next dev --turbopack",
     "build": "next build --turbopack",
     "migrate": "prisma migrate deploy",
-    "start": "next start -p $PORT",
+    "start": "sh ./scripts/start-with-migrate.sh"
     "start-with-migrate": "sh ./scripts/start-with-migrate.sh",
     "lint": "eslint"
   },
