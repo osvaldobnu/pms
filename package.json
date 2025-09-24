@@ -5,8 +5,8 @@
   "scripts": {
     "dev": "next dev --turbopack",
     "build": "next build --turbopack",
-	"migrate" : "prisma migrate deploy",
-    "start": "npm run migrate && next start -p $PORT",
+    "migrate": "prisma migrate deploy",
+    "start": "npm run migrate && next start -p $PORT"
     "lint": "eslint"
   },
   "dependencies": {
