@@ -1,4 +1,4 @@
-// Tipos de propriedade
+// Tipos de propriedade1
 export interface PropertyForm {
   id?: string;
   name: string;
