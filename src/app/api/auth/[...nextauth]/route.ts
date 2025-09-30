@@ -34,9 +34,9 @@ export const authOptions: NextAuthOptions = {
   session: {
     strategy: "jwt",
   },
-  secret: process.env.NEXTAUTH_SECRET, // 🔑 garante que o secret do Railway será usado
+  secret: process.env.NEXTAUTH_SECRET,
   pages: {
-    signIn: "/login",
+    signIn: "/login", // 👈 página de login
   },
 };
 
