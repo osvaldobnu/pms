@@ -4,9 +4,8 @@
   "private": true,
   "scripts": {
     "dev": "next dev --turbopack",
-    "build": "next build && npm run seed",
+    "build": "next build && node prisma/seed.js",
     "start": "next start",
-    "seed": "ts-node prisma/seed.ts",
     "lint": "eslint"
   },
   "dependencies": {
