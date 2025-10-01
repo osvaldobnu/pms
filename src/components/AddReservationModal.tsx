@@ -35,16 +35,16 @@ export default function AddReservationModal({
     secondInstallmentDate: "",
     thirdInstallmentDate: "",
     commissionTotal: "",
-    commissionStatusJoao: "",
-    commissionStatusMateus: "",
+    cleaningFee: "",
+    monetaryValue: "",
   });
 
-  // preencher quando for edição
+  // Preencher quando for edição
   useEffect(() => {
     if (reservation) {
       setForm({
         code: reservation.code || "",
-        guestName: reservation.guestName || "",
+        guestName: reservation.guestName,
         guestCount: reservation.guestCount !== undefined ? String(reservation.guestCount) : "",
         propertyId: reservation.property?.id || "",
         checkIn: reservation.checkIn ? new Date(reservation.checkIn).toISOString().split("T")[0] : "",
@@ -63,13 +63,13 @@ export default function AddReservationModal({
           reservation.commissionTotal !== undefined && reservation.commissionTotal !== null
             ? String(reservation.commissionTotal)
             : "",
-        commissionStatusJoao: reservation.commissionStatusJoao || "",
-        commissionStatusMateus: reservation.commissionStatusMateus || "",
+        cleaningFee: reservation.cleaningFee !== undefined ? String(reservation.cleaningFee) : "",
+        monetaryValue: reservation.monetaryValue !== undefined ? String(reservation.monetaryValue) : "",
       });
     }
   }, [reservation]);
 
-  // buscar próximo código quando for nova reserva
+  // Buscar próximo código quando for nova reserva
   useEffect(() => {
     const fetchNextCode = async () => {
       if (!reservation) {
@@ -85,6 +85,7 @@ export default function AddReservationModal({
     fetchNextCode();
   }, [reservation]);
 
+  // Buscar propriedades ativas
   useEffect(() => {
     const fetchProperties = async () => {
       try {
@@ -105,13 +106,15 @@ export default function AddReservationModal({
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>
   ) => {
-    setForm({ ...form, [e.target.id]: e.target.value });
+    const { id, value } = e.target;
+    setForm((prev) => ({ ...prev, [id]: value }));
   };
 
-  // recalcula valor (quando mudar property, datas OU número de hóspedes)
+  // Recalcula valor total (valor da reserva + taxa de faxina)
   useEffect(() => {
     const calculateTotalValue = async () => {
       if (!form.propertyId || !form.checkIn || !form.checkOut) return;
+
       try {
         const res = await fetch("/api/reservas/calculate", {
           method: "POST",
@@ -123,17 +126,22 @@ export default function AddReservationModal({
             guestCount: form.guestCount ? parseInt(form.guestCount) : 0,
           }),
         });
+
         if (!res.ok) return;
         const data = await res.json();
+
         if (data && data.totalValue !== undefined) {
-          setForm((prev) => ({ ...prev, totalValue: String(data.totalValue) }));
+          const cleaning = parseFloat(form.cleaningFee || "0");
+          const total = parseFloat(data.totalValue) + cleaning;
+          setForm((prev) => ({ ...prev, totalValue: total.toFixed(2) }));
         }
       } catch (err) {
         console.error("Erro ao calcular valor:", err);
       }
     };
+
     calculateTotalValue();
-  }, [form.propertyId, form.checkIn, form.checkOut, form.guestCount]);
+  }, [form.propertyId, form.checkIn, form.checkOut, form.guestCount, form.cleaningFee]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -141,7 +149,7 @@ export default function AddReservationModal({
 
     try {
       const bodyPayload: any = {
-        code: form.code, // sempre enviar o código
+        code: form.code,
         guestName: form.guestName,
         guestCount: form.guestCount ? parseInt(form.guestCount) : null,
         propertyId: form.propertyId,
@@ -154,13 +162,11 @@ export default function AddReservationModal({
         secondInstallmentDate: form.secondInstallmentDate || null,
         thirdInstallmentDate: form.thirdInstallmentDate || null,
         commissionTotal: form.commissionTotal ? parseFloat(form.commissionTotal) : null,
-        commissionStatusJoao: form.commissionStatusJoao || null,
-        commissionStatusMateus: form.commissionStatusMateus || null,
+        cleaningFee: form.cleaningFee ? parseFloat(form.cleaningFee) : null,
+        monetaryValue: form.monetaryValue ? parseFloat(form.monetaryValue) : null,
       };
 
-      if (reservation?.id) {
-        bodyPayload.id = reservation.id;
-      }
+      if (reservation?.id) bodyPayload.id = reservation.id;
 
       const res = await fetch("/api/reservas", {
         method,
@@ -198,7 +204,7 @@ export default function AddReservationModal({
         <h2 className="text-xl font-bold mb-4">{reservation ? "Editar Reserva" : "Nova Reserva"}</h2>
 
         <form onSubmit={handleSubmit} className="space-y-4">
-          {/* Campo Código - sempre visível */}
+          {/* Código */}
           <div>
             <label htmlFor="code" className="block text-sm font-medium text-gray-700">
               Código
@@ -356,16 +362,16 @@ export default function AddReservationModal({
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div>
-              <label htmlFor="totalValue" className="block text-sm font-medium text-gray-700">
-                Valor Total *
+              <label htmlFor="monetaryValue" className="block text-sm font-medium text-gray-700">
+                Valor Monetário
               </label>
               <input
                 type="number"
-                id="totalValue"
-                value={form.totalValue}
+                id="monetaryValue"
+                value={form.monetaryValue}
                 onChange={handleChange}
                 className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
-                required
+                min={0}
               />
             </div>
 
@@ -381,38 +387,34 @@ export default function AddReservationModal({
                 className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
               />
             </div>
+          </div>
 
-            <div className="grid grid-cols-2 gap-2">
-              <div>
-                <label htmlFor="commissionStatusJoao" className="block text-sm font-medium text-gray-700">
-                  Comissão João
-                </label>
-                <select
-                  id="commissionStatusJoao"
-                  value={form.commissionStatusJoao}
-                  onChange={handleChange}
-                  className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
-                >
-                  <option value="">Selecione</option>
-                  <option value="Pendente">Pendente</option>
-                  <option value="Pago">Pago</option>
-                </select>
-              </div>
-              <div>
-                <label htmlFor="commissionStatusMateus" className="block text-sm font-medium text-gray-700">
-                  Comissão Mateus
-                </label>
-                <select
-                  id="commissionStatusMateus"
-                  value={form.commissionStatusMateus}
-                  onChange={handleChange}
-                  className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
-                >
-                  <option value="">Selecione</option>
-                  <option value="Pendente">Pendente</option>
-                  <option value="Pago">Pago</option>
-                </select>
-              </div>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div>
+              <label htmlFor="cleaningFee" className="block text-sm font-medium text-gray-700">
+                Taxa de Faxina
+              </label>
+              <input
+                type="number"
+                id="cleaningFee"
+                value={form.cleaningFee}
+                onChange={handleChange}
+                className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
+                min={0}
+              />
+            </div>
+            <div>
+              <label htmlFor="totalValue" className="block text-sm font-medium text-gray-700">
+                Valor Total *
+              </label>
+              <input
+                type="number"
+                id="totalValue"
+                value={form.totalValue}
+                onChange={handleChange}
+                className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
+                required
+              />
             </div>
           </div>
 

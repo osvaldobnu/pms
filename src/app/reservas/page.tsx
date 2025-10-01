@@ -98,8 +98,6 @@ export default function ReservasPage() {
                 <th className="p-3">3ª Parcela</th>
                 <th className="p-3">Valor Total</th>
                 <th className="p-3">Valor Comissão</th>
-                <th className="p-3">Comissão João</th>
-                <th className="p-3">Comissão Mateus</th>
                 <th className="p-3 text-center">Ações</th>
               </tr>
             </thead>
@@ -118,8 +116,6 @@ export default function ReservasPage() {
                   <td className="p-3">{r.thirdInstallmentDate ? new Date(r.thirdInstallmentDate).toLocaleDateString() : "-"}</td>
                   <td className="p-3">{typeof r.totalValue === "number" ? r.totalValue.toFixed(2) : "-"}</td>
                   <td className="p-3">{r.commissionTotal != null ? r.commissionTotal.toFixed(2) : "-"}</td>
-                  <td className="p-3">{r.commissionStatusJoao || "-"}</td>
-                  <td className="p-3">{r.commissionStatusMateus || "-"}</td>
                   <td className="p-3 flex justify-center gap-3">
                     {!r.canceled && (
                       <>

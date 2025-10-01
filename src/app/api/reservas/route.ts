@@ -42,9 +42,8 @@ export async function POST(req: Request) {
           ? new Date(body.thirdInstallmentDate)
           : null,
         commissionTotal: body.commissionTotal ? parseFloat(body.commissionTotal) : null,
-        commissionStatusJoao: body.commissionStatusJoao || null,
-        commissionStatusMateus: body.commissionStatusMateus || null,
-
+        cleaningFee: body.cleaningFee ? parseFloat(body.cleaningFee) : null,
+        monetaryValue: body.monetaryValue ? parseFloat(body.monetaryValue) : null,
         property: { connect: { id: body.propertyId } },
       },
       include: { property: true },
@@ -79,8 +78,8 @@ export async function PUT(req: Request) {
           ? new Date(body.thirdInstallmentDate)
           : null,
         commissionTotal: body.commissionTotal ? parseFloat(body.commissionTotal) : null,
-        commissionStatusJoao: body.commissionStatusJoao ?? null,
-        commissionStatusMateus: body.commissionStatusMateus ?? null,
+        cleaningFee: body.cleaningFee ? parseFloat(body.cleaningFee) : null,
+        monetaryValue: body.monetaryValue ? parseFloat(body.monetaryValue) : null,
         property: body.propertyId ? { connect: { id: body.propertyId } } : undefined,
       },
       include: { property: true },
