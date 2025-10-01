@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { prisma } from "../../_lib/prisma";
+import { prisma } from "@/src/app/_lib/prisma";
 
 // Listar reservas
 export async function GET() {
