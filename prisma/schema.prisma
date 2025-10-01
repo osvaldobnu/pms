@@ -57,6 +57,7 @@ model Property {
 
 model Reservation {
   id         String   @id @default(cuid())
+  code       String   @unique     // Novo campo incremental no formato 000001
   guestName  String
   contactPhone String?
   origin     String?

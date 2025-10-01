@@ -22,6 +22,7 @@ export default function AddReservationModal({
   const overlayRef = useRef<HTMLDivElement>(null);
   const [properties, setProperties] = useState<PropertyData[]>([]);
   const [form, setForm] = useState<ReservationForm>({
+    code: "",
     guestName: "",
     guestCount: "",
     propertyId: initialPropertyId || "",
@@ -42,6 +43,7 @@ export default function AddReservationModal({
   useEffect(() => {
     if (reservation) {
       setForm({
+        code: reservation.code || "",
         guestName: reservation.guestName || "",
         guestCount: reservation.guestCount !== undefined ? String(reservation.guestCount) : "",
         propertyId: reservation.property?.id || "",
@@ -65,6 +67,22 @@ export default function AddReservationModal({
         commissionStatusMateus: reservation.commissionStatusMateus || "",
       });
     }
+  }, [reservation]);
+
+  // buscar próximo código quando for nova reserva
+  useEffect(() => {
+    const fetchNextCode = async () => {
+      if (!reservation) {
+        try {
+          const res = await fetch("/api/reservas/next-code");
+          const data = await res.json();
+          setForm((prev) => ({ ...prev, code: data.nextCode }));
+        } catch (err) {
+          console.error("Erro ao buscar próximo código", err);
+        }
+      }
+    };
+    fetchNextCode();
   }, [reservation]);
 
   useEffect(() => {
@@ -123,6 +141,7 @@ export default function AddReservationModal({
 
     try {
       const bodyPayload: any = {
+        code: form.code, // sempre enviar o código
         guestName: form.guestName,
         guestCount: form.guestCount ? parseInt(form.guestCount) : null,
         propertyId: form.propertyId,
@@ -179,6 +198,20 @@ export default function AddReservationModal({
         <h2 className="text-xl font-bold mb-4">{reservation ? "Editar Reserva" : "Nova Reserva"}</h2>
 
         <form onSubmit={handleSubmit} className="space-y-4">
+          {/* Campo Código - sempre visível */}
+          <div>
+            <label htmlFor="code" className="block text-sm font-medium text-gray-700">
+              Código
+            </label>
+            <input
+              type="text"
+              id="code"
+              value={form.code}
+              readOnly
+              className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2 bg-gray-100"
+            />
+          </div>
+
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
               <label htmlFor="guestName" className="block text-sm font-medium text-gray-700">

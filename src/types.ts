@@ -1,4 +1,4 @@
-// Tipos de propriedade1
+// Tipos de propriedade
 export interface PropertyForm {
   id?: string;
   name: string;
@@ -74,9 +74,10 @@ export interface PropertyData {
 
 // --- Tipos de Reserva ---
 export interface ReservationForm {
+  code?: string; // Novo campo (código gerado automaticamente)
   guestName: string;
   propertyId: string;
-  guestCount?: string; // NOVO
+  guestCount?: string; 
   checkIn: string;
   checkOut: string;
   totalValue: string;
@@ -92,8 +93,9 @@ export interface ReservationForm {
 
 export interface ReservationData {
   id: string;
+  code?: string; // Novo campo (código exibido no modal e tabelas)
   guestName: string;
-  guestCount?: number; // NOVO
+  guestCount?: number; 
   property: PropertyData;
   checkIn: string;
   checkOut: string;

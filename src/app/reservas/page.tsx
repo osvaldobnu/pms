@@ -86,6 +86,7 @@ export default function ReservasPage() {
           <table className="w-full text-left border-collapse">
             <thead>
               <tr className="bg-gray-100 text-gray-700 text-sm uppercase">
+                <th className="p-3">Código</th>
                 <th className="p-3">Hóspede</th>
                 <th className="p-3">Qtd. Hóspedes</th>
                 <th className="p-3">Propriedade</th>
@@ -105,6 +106,7 @@ export default function ReservasPage() {
             <tbody>
               {reservas.map((r) => (
                 <tr key={r.id} className="border-t hover:bg-gray-50 transition-colors">
+                  <td className="p-3">{r.code || "-"}</td>
                   <td className="p-3">{r.guestName || "-"}</td>
                   <td className="p-3">{r.guestCount ?? "-"}</td>
                   <td className="p-3">{r.property?.name || "-"}</td>
