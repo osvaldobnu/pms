@@ -1,4 +1,4 @@
-// Tipos de propriedade
+// --- Tipos de Propriedade ---
 export interface PropertyForm {
   id?: string;
   name: string;
@@ -16,8 +16,9 @@ export interface PropertyForm {
   beds: string;
   amenities?: string;
   extraGuestFee?: string;
+  cleaningFee?: string; // NOVO CAMPO
 
-  // novos campos de camas
+  // Configuração de camas
   crib?: string;
   childBed?: string;
   doubleBed?: string;
@@ -52,8 +53,9 @@ export interface PropertyData {
   beds: number;
   amenities?: string;
   extraGuestFee?: number;
+  cleaningFee?: number; // NOVO CAMPO
 
-  // novos campos de camas
+  // Configuração de camas
   crib?: number;
   childBed?: number;
   doubleBed?: number;
@@ -74,10 +76,10 @@ export interface PropertyData {
 
 // --- Tipos de Reserva ---
 export interface ReservationForm {
-  code?: string; // Novo campo (código gerado automaticamente)
+  code?: string;
   guestName: string;
   propertyId: string;
-  guestCount?: string; 
+  guestCount?: string;
   checkIn: string;
   checkOut: string;
   totalValue: string;
@@ -87,15 +89,15 @@ export interface ReservationForm {
   secondInstallmentDate?: string;
   thirdInstallmentDate?: string;
   commissionTotal?: string;
-  commissionStatusJoao?: string;
-  commissionStatusMateus?: string;
+  cleaningFee?: string;     // Taxa de Faxina
+  monetaryValue?: string;   // Valor Monetário
 }
 
 export interface ReservationData {
   id: string;
-  code?: string; // Novo campo (código exibido no modal e tabelas)
+  code?: string;
   guestName: string;
-  guestCount?: number; 
+  guestCount?: number;
   property: PropertyData;
   checkIn: string;
   checkOut: string;
@@ -107,8 +109,8 @@ export interface ReservationData {
   secondInstallmentDate?: string;
   thirdInstallmentDate?: string;
   commissionTotal?: number;
-  commissionStatusJoao?: string;
-  commissionStatusMateus?: string;
+  cleaningFee?: number;     // Taxa de Faxina
+  monetaryValue?: number;   // Valor Monetário
   createdAt: string;
   updatedAt: string;
 }

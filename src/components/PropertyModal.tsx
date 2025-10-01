@@ -26,6 +26,7 @@ export default function PropertyModal({ onClose, property }: PropertyModalProps)
     beds: "",
     amenities: "",
     extraGuestFee: "",
+    cleaningFee: "",  // NOVO CAMPO
     crib: "",
     childBed: "",
     doubleBed: "",
@@ -44,13 +45,41 @@ export default function PropertyModal({ onClose, property }: PropertyModalProps)
 
   useEffect(() => {
     if (property) {
-      setForm(property);
+      setForm({
+        name: property.name ?? "",
+        title: property.title ?? "",
+        description: property.description ?? "",
+        phone: property.phone ?? "",
+        ranking: property.ranking !== undefined && property.ranking !== null ? String(property.ranking) : "",
+        location: property.location ?? "",
+        locationNotes: property.locationNotes ?? "",
+        beach: property.beach ?? "",
+        guests: property.guests !== undefined && property.guests !== null ? String(property.guests) : "",
+        bedrooms: property.bedrooms !== undefined && property.bedrooms !== null ? String(property.bedrooms) : "",
+        beds: property.beds !== undefined && property.beds !== null ? String(property.beds) : "",
+        amenities: property.amenities ?? "",
+        extraGuestFee: property.extraGuestFee !== undefined && property.extraGuestFee !== null ? String(property.extraGuestFee) : "",
+        cleaningFee: property.cleaningFee !== undefined && property.cleaningFee !== null ? String(property.cleaningFee) : "",
+        crib: property.crib !== undefined && property.crib !== null ? String(property.crib) : "",
+        childBed: property.childBed !== undefined && property.childBed !== null ? String(property.childBed) : "",
+        doubleBed: property.doubleBed !== undefined && property.doubleBed !== null ? String(property.doubleBed) : "",
+        foldingBed: property.foldingBed !== undefined && property.foldingBed !== null ? String(property.foldingBed) : "",
+        kingBed: property.kingBed !== undefined && property.kingBed !== null ? String(property.kingBed) : "",
+        mezzanineBed: property.mezzanineBed !== undefined && property.mezzanineBed !== null ? String(property.mezzanineBed) : "",
+        queenBed: property.queenBed !== undefined && property.queenBed !== null ? String(property.queenBed) : "",
+        sofaBed: property.sofaBed !== undefined && property.sofaBed !== null ? String(property.sofaBed) : "",
+        singleBed: property.singleBed !== undefined && property.singleBed !== null ? String(property.singleBed) : "",
+        lowSeason: property.lowSeason !== undefined && property.lowSeason !== null ? String(property.lowSeason) : "",
+        holidays: property.holidays !== undefined && property.holidays !== null ? String(property.holidays) : "",
+        christmas: property.christmas !== undefined && property.christmas !== null ? String(property.christmas) : "",
+        newYear: property.newYear !== undefined && property.newYear !== null ? String(property.newYear) : "",
+        carnival: property.carnival !== undefined && property.carnival !== null ? String(property.carnival) : "",
+      });
     }
   }, [property]);
 
-  const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
-  ) => {
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     setForm({ ...form, [e.target.id]: e.target.value });
   };
 
@@ -126,7 +155,7 @@ export default function PropertyModal({ onClose, property }: PropertyModalProps)
             </div>
           </div>
 
-          {/* Nome do Proprietário e Telefone */}
+          {/* Nome e Telefone */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
               <label htmlFor="name" className="block text-sm font-medium text-gray-700">
@@ -166,10 +195,10 @@ export default function PropertyModal({ onClose, property }: PropertyModalProps)
               onChange={handleChange}
               rows={3}
               className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2 resize-none"
-            ></textarea>
+            />
           </div>
 
-          {/* Localização */}
+          {/* Localização e Praia */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div>
               <label htmlFor="location" className="block text-sm font-medium text-gray-700">
@@ -219,7 +248,6 @@ export default function PropertyModal({ onClose, property }: PropertyModalProps)
                 type="number"
                 id="guests"
                 min="1"
-                max="20"
                 value={form.guests}
                 onChange={handleChange}
                 className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
@@ -254,6 +282,21 @@ export default function PropertyModal({ onClose, property }: PropertyModalProps)
             </div>
           </div>
 
+          {/* Taxa de Faxina */}
+          <div>
+            <label htmlFor="cleaningFee" className="block text-sm font-medium text-gray-700">
+              Taxa de Faxina
+            </label>
+            <input
+              type="number"
+              id="cleaningFee"
+              value={form.cleaningFee}
+              onChange={handleChange}
+              className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
+              min={0}
+            />
+          </div>
+
           {/* Configuração das Camas */}
           <div>
             <h3 className="text-lg font-semibold mt-6 mb-2">Configuração das Camas</h3>
@@ -283,35 +326,6 @@ export default function PropertyModal({ onClose, property }: PropertyModalProps)
                 </div>
               ))}
             </div>
-          </div>
-
-          {/* Comodidades */}
-          <div>
-            <label htmlFor="amenities" className="block text-sm font-medium text-gray-700">
-              Comodidades
-            </label>
-            <textarea
-              id="amenities"
-              value={form.amenities}
-              onChange={handleChange}
-              rows={2}
-              placeholder="Ex: Piscina, Churrasqueira, Wi-Fi..."
-              className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2 resize-none"
-            ></textarea>
-          </div>
-
-          {/* Extra por hóspede */}
-          <div>
-            <label htmlFor="extraGuestFee" className="block text-sm font-medium text-gray-700">
-              Adicional por Hóspede
-            </label>
-            <input
-              type="number"
-              id="extraGuestFee"
-              value={form.extraGuestFee}
-              onChange={handleChange}
-              className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
-            />
           </div>
 
           {/* Valores por temporada */}

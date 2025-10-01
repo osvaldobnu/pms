@@ -32,16 +32,18 @@ model Property {
   amenities    String?
   extraGuestFee Float?
 
+  cleaningFee Float?   // NOVO CAMPO
+
   // Configuração de camas
-  crib            Int?   // berço
-  childBed        Int?   // cama de criança
-  doubleBed       Int?   // cama de casal
-  foldingBed      Int?   // cama desmontável
-  kingBed         Int?   // cama king-size
-  mezzanineBed    Int?   // cama mezanino
-  queenBed        Int?   // cama queen-size
-  sofaBed         Int?   // sofá-cama
-  singleBed       Int?   // cama individual
+  crib            Int?
+  childBed        Int?
+  doubleBed       Int?
+  foldingBed      Int?
+  kingBed         Int?
+  mezzanineBed    Int?
+  queenBed        Int?
+  sofaBed         Int?
+  singleBed       Int?
 
   lowSeason   Float
   holidays    Float
@@ -57,7 +59,7 @@ model Property {
 
 model Reservation {
   id         String   @id @default(cuid())
-  code       String   @unique     // Novo campo incremental no formato 000001
+  code       String   @unique
   guestName  String
   contactPhone String?
   origin     String?
@@ -73,8 +75,9 @@ model Reservation {
   secondInstallmentDate   DateTime?
   thirdInstallmentDate    DateTime?
   commissionTotal         Float?
-  commissionStatusJoao    String?
-  commissionStatusMateus  String?
+
+  cleaningFee Float?     // Taxa de Faxina
+  monetaryValue Float?   // Valor Monetário
 
   propertyId String
   property   Property @relation(fields: [propertyId], references: [id])

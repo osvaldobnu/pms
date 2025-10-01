@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { prisma } from "../../_lib/prisma";
 
-// Criar uma nova propriedade
+// Criar nova propriedade
 export async function POST(req: Request) {
   try {
     const body = await req.json();
@@ -21,7 +21,7 @@ export async function POST(req: Request) {
         beds: Number(body.beds),
         amenities: body.amenities || null,
         extraGuestFee: body.extraGuestFee ? parseFloat(body.extraGuestFee) : null,
-
+        cleaningFee: body.cleaningFee ? parseFloat(body.cleaningFee) : null, // NOVO CAMPO
         crib: body.crib ? Number(body.crib) : null,
         childBed: body.childBed ? Number(body.childBed) : null,
         doubleBed: body.doubleBed ? Number(body.doubleBed) : null,
@@ -31,7 +31,6 @@ export async function POST(req: Request) {
         queenBed: body.queenBed ? Number(body.queenBed) : null,
         sofaBed: body.sofaBed ? Number(body.sofaBed) : null,
         singleBed: body.singleBed ? Number(body.singleBed) : null,
-
         lowSeason: parseFloat(body.lowSeason),
         holidays: parseFloat(body.holidays),
         christmas: parseFloat(body.christmas),
@@ -81,7 +80,7 @@ export async function PUT(req: Request) {
         beds: Number(body.beds),
         amenities: body.amenities || null,
         extraGuestFee: body.extraGuestFee ? parseFloat(body.extraGuestFee) : null,
-
+        cleaningFee: body.cleaningFee ? parseFloat(body.cleaningFee) : null, // NOVO CAMPO
         crib: body.crib ? Number(body.crib) : null,
         childBed: body.childBed ? Number(body.childBed) : null,
         doubleBed: body.doubleBed ? Number(body.doubleBed) : null,
@@ -91,7 +90,6 @@ export async function PUT(req: Request) {
         queenBed: body.queenBed ? Number(body.queenBed) : null,
         sofaBed: body.sofaBed ? Number(body.sofaBed) : null,
         singleBed: body.singleBed ? Number(body.singleBed) : null,
-
         lowSeason: parseFloat(body.lowSeason),
         holidays: parseFloat(body.holidays),
         christmas: parseFloat(body.christmas),
