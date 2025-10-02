@@ -107,7 +107,18 @@ export default function AddReservationModal({
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>
   ) => {
     const { id, value } = e.target;
-    setForm((prev) => ({ ...prev, [id]: value }));
+
+    // Se for a propriedade, já traz o cleaningFee dela
+    if (id === "propertyId") {
+      const selected = properties.find((p) => p.id === value);
+      setForm((prev) => ({
+        ...prev,
+        propertyId: value,
+        cleaningFee: selected?.cleaningFee ? String(selected.cleaningFee) : "",
+      }));
+    } else {
+      setForm((prev) => ({ ...prev, [id]: value }));
+    }
   };
 
   // Recalcula valor total (valor da reserva + taxa de faxina)
@@ -218,206 +229,200 @@ export default function AddReservationModal({
             />
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div>
-              <label htmlFor="guestName" className="block text-sm font-medium text-gray-700">
-                Nome do Hóspede *
-              </label>
-              <input
-                type="text"
-                id="guestName"
-                value={form.guestName}
-                onChange={handleChange}
-                className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
-                required
-              />
-            </div>
-
-            <div>
-              <label htmlFor="guestCount" className="block text-sm font-medium text-gray-700">
-                Número de Hóspedes
-              </label>
-              <input
-                type="number"
-                id="guestCount"
-                value={form.guestCount}
-                onChange={handleChange}
-                className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
-                min={1}
-              />
-            </div>
-
-            <div>
-              <label htmlFor="propertyId" className="block text-sm font-medium text-gray-700">
-                Propriedade *
-              </label>
-              <select
-                id="propertyId"
-                value={form.propertyId}
-                onChange={handleChange}
-                className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
-                required
-              >
-                <option value="">Selecione a propriedade</option>
-                {properties.map((p) => (
-                  <option key={p.id} value={p.id}>
-                    {p.name} ({p.bedrooms} quartos)
-                  </option>
-                ))}
-              </select>
-            </div>
-
-            <div className="grid grid-cols-2 gap-4">
-              <div>
-                <label htmlFor="checkIn" className="block text-sm font-medium text-gray-700">
-                  Check-in *
-                </label>
-                <input
-                  type="date"
-                  id="checkIn"
-                  value={form.checkIn}
-                  onChange={handleChange}
-                  className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
-                  required
-                />
-              </div>
-              <div>
-                <label htmlFor="checkOut" className="block text-sm font-medium text-gray-700">
-                  Check-out *
-                </label>
-                <input
-                  type="date"
-                  id="checkOut"
-                  value={form.checkOut}
-                  onChange={handleChange}
-                  className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
-                  required
-                />
-              </div>
-            </div>
+          {/* Nome do hóspede */}
+          <div>
+            <label htmlFor="guestName" className="block text-sm font-medium text-gray-700">
+              Nome do Hóspede
+            </label>
+            <input
+              type="text"
+              id="guestName"
+              value={form.guestName}
+              onChange={handleChange}
+              required
+              className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
+            />
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <div>
-              <label htmlFor="paymentMethod" className="block text-sm font-medium text-gray-700">
-                Forma de Pagamento
-              </label>
-              <select
-                id="paymentMethod"
-                value={form.paymentMethod}
-                onChange={handleChange}
-                className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
-              >
-                <option value="">Selecione</option>
-                <option value="Cartão">Cartão</option>
-                <option value="Pix">Pix</option>
-                <option value="Pix Parcelado">Pix Parcelado</option>
-              </select>
-            </div>
-
-            <div>
-              <label htmlFor="paymentStatus" className="block text-sm font-medium text-gray-700">
-                Status de Pagamento
-              </label>
-              <select
-                id="paymentStatus"
-                value={form.paymentStatus}
-                onChange={handleChange}
-                className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
-              >
-                <option value="">Selecione</option>
-                <option value="Realizado">Realizado</option>
-                <option value="Pago Entrada">Pago Entrada</option>
-                <option value="Pendente">Pendente</option>
-              </select>
-            </div>
-
-            <div className="grid grid-cols-2 gap-4">
-              <div>
-                <label htmlFor="secondInstallmentDate" className="block text-sm font-medium text-gray-700">
-                  2ª Parcela
-                </label>
-                <input
-                  type="date"
-                  id="secondInstallmentDate"
-                  value={form.secondInstallmentDate}
-                  onChange={handleChange}
-                  className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
-                />
-              </div>
-              <div>
-                <label htmlFor="thirdInstallmentDate" className="block text-sm font-medium text-gray-700">
-                  3ª Parcela
-                </label>
-                <input
-                  type="date"
-                  id="thirdInstallmentDate"
-                  value={form.thirdInstallmentDate}
-                  onChange={handleChange}
-                  className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
-                />
-              </div>
-            </div>
+          {/* Qtd hóspedes */}
+          <div>
+            <label htmlFor="guestCount" className="block text-sm font-medium text-gray-700">
+              Quantidade de Hóspedes
+            </label>
+            <input
+              type="number"
+              id="guestCount"
+              value={form.guestCount}
+              onChange={handleChange}
+              className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
+            />
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <div>
-              <label htmlFor="monetaryValue" className="block text-sm font-medium text-gray-700">
-                Valor Monetário
-              </label>
-              <input
-                type="number"
-                id="monetaryValue"
-                value={form.monetaryValue}
-                onChange={handleChange}
-                className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
-                min={0}
-              />
-            </div>
-
-            <div>
-              <label htmlFor="commissionTotal" className="block text-sm font-medium text-gray-700">
-                Valor Total da Comissão
-              </label>
-              <input
-                type="number"
-                id="commissionTotal"
-                value={form.commissionTotal}
-                onChange={handleChange}
-                className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
-              />
-            </div>
+          {/* Propriedade */}
+          <div>
+            <label htmlFor="propertyId" className="block text-sm font-medium text-gray-700">
+              Propriedade
+            </label>
+            <select
+              id="propertyId"
+              value={form.propertyId}
+              onChange={handleChange}
+              required
+              className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
+            >
+              <option value="">Selecione uma propriedade</option>
+              {properties.map((p) => (
+                <option key={p.id} value={p.id}>
+                  {p.name}
+                </option>
+              ))}
+            </select>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <div>
-              <label htmlFor="cleaningFee" className="block text-sm font-medium text-gray-700">
-                Taxa de Faxina
-              </label>
-              <input
-                type="number"
-                id="cleaningFee"
-                value={form.cleaningFee}
-                onChange={handleChange}
-                className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
-                min={0}
-              />
-            </div>
-            <div>
-              <label htmlFor="totalValue" className="block text-sm font-medium text-gray-700">
-                Valor Total *
-              </label>
-              <input
-                type="number"
-                id="totalValue"
-                value={form.totalValue}
-                onChange={handleChange}
-                className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
-                required
-              />
-            </div>
+          {/* Check-in */}
+          <div>
+            <label htmlFor="checkIn" className="block text-sm font-medium text-gray-700">
+              Check-in
+            </label>
+            <input
+              type="date"
+              id="checkIn"
+              value={form.checkIn}
+              onChange={handleChange}
+              required
+              className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
+            />
           </div>
 
+          {/* Check-out */}
+          <div>
+            <label htmlFor="checkOut" className="block text-sm font-medium text-gray-700">
+              Check-out
+            </label>
+            <input
+              type="date"
+              id="checkOut"
+              value={form.checkOut}
+              onChange={handleChange}
+              required
+              className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
+            />
+          </div>
+
+          {/* Taxa de Faxina */}
+          <div>
+            <label htmlFor="cleaningFee" className="block text-sm font-medium text-gray-700">
+              Taxa de Faxina
+            </label>
+            <input
+              type="number"
+              id="cleaningFee"
+              value={form.cleaningFee}
+              onChange={handleChange}
+              className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
+            />
+          </div>
+
+          {/* Valor Total */}
+          <div>
+            <label htmlFor="totalValue" className="block text-sm font-medium text-gray-700">
+              Valor Total
+            </label>
+            <input
+              type="number"
+              id="totalValue"
+              value={form.totalValue}
+              onChange={handleChange}
+              required
+              className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
+            />
+          </div>
+
+          {/* Valor Comissão */}
+          <div>
+            <label htmlFor="commissionTotal" className="block text-sm font-medium text-gray-700">
+              Valor Comissão
+            </label>
+            <input
+              type="number"
+              id="commissionTotal"
+              value={form.commissionTotal}
+              onChange={handleChange}
+              className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
+            />
+          </div>
+
+          {/* Valor Monetário */}
+          <div>
+            <label htmlFor="monetaryValue" className="block text-sm font-medium text-gray-700">
+              Valor Monetário
+            </label>
+            <input
+              type="number"
+              id="monetaryValue"
+              value={form.monetaryValue}
+              onChange={handleChange}
+              className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
+            />
+          </div>
+
+          {/* Forma Pagamento */}
+          <div>
+            <label htmlFor="paymentMethod" className="block text-sm font-medium text-gray-700">
+              Forma de Pagamento
+            </label>
+            <input
+              type="text"
+              id="paymentMethod"
+              value={form.paymentMethod}
+              onChange={handleChange}
+              className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
+            />
+          </div>
+
+          {/* Status Pagamento */}
+          <div>
+            <label htmlFor="paymentStatus" className="block text-sm font-medium text-gray-700">
+              Status do Pagamento
+            </label>
+            <input
+              type="text"
+              id="paymentStatus"
+              value={form.paymentStatus}
+              onChange={handleChange}
+              className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
+            />
+          </div>
+
+          {/* Segunda Parcela */}
+          <div>
+            <label htmlFor="secondInstallmentDate" className="block text-sm font-medium text-gray-700">
+              Data 2ª Parcela
+            </label>
+            <input
+              type="date"
+              id="secondInstallmentDate"
+              value={form.secondInstallmentDate}
+              onChange={handleChange}
+              className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
+            />
+          </div>
+
+          {/* Terceira Parcela */}
+          <div>
+            <label htmlFor="thirdInstallmentDate" className="block text-sm font-medium text-gray-700">
+              Data 3ª Parcela
+            </label>
+            <input
+              type="date"
+              id="thirdInstallmentDate"
+              value={form.thirdInstallmentDate}
+              onChange={handleChange}
+              className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
+            />
+          </div>
+
+          {/* Observações */}
           <div>
             <label htmlFor="notes" className="block text-sm font-medium text-gray-700">
               Observações
@@ -426,25 +431,17 @@ export default function AddReservationModal({
               id="notes"
               value={form.notes}
               onChange={handleChange}
-              rows={3}
-              placeholder="Ex: Necessita berço, chegada após 22h..."
-              className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2 resize-none"
-            ></textarea>
+              className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
+            />
           </div>
 
-          <div className="flex justify-end space-x-4">
-            <button
-              type="button"
-              onClick={onClose}
-              className="px-4 py-2 border border-gray-300 rounded-md font-medium text-gray-700 hover:bg-gray-50 transition-colors"
-            >
-              Cancelar
-            </button>
+          {/* Botão Salvar */}
+          <div className="flex justify-end">
             <button
               type="submit"
-              className="px-4 py-2 bg-black text-white rounded-md font-medium hover:bg-gray-800 transition-colors"
+              className="bg-black text-white font-semibold py-2 px-4 rounded-lg hover:bg-gray-800 transition-colors"
             >
-              {reservation ? "Salvar" : "Criar"}
+              {reservation ? "Atualizar" : "Salvar"}
             </button>
           </div>
         </form>
