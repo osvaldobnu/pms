@@ -39,17 +39,31 @@ export default function AddReservationModal({
     monetaryValue: "",
   });
 
+  // Opções fixas
+  const paymentMethods = ["Cartão", "Pix", "Pix Parcelado"];
+  const paymentStatuses = ["Realizado", "Pago Entrada", "Pendente"];
+
   // Preencher quando for edição
   useEffect(() => {
     if (reservation) {
       setForm({
         code: reservation.code || "",
         guestName: reservation.guestName,
-        guestCount: reservation.guestCount !== undefined ? String(reservation.guestCount) : "",
+        guestCount:
+          reservation.guestCount !== undefined
+            ? String(reservation.guestCount)
+            : "",
         propertyId: reservation.property?.id || "",
-        checkIn: reservation.checkIn ? new Date(reservation.checkIn).toISOString().split("T")[0] : "",
-        checkOut: reservation.checkOut ? new Date(reservation.checkOut).toISOString().split("T")[0] : "",
-        totalValue: reservation.totalValue !== undefined ? String(reservation.totalValue) : "",
+        checkIn: reservation.checkIn
+          ? new Date(reservation.checkIn).toISOString().split("T")[0]
+          : "",
+        checkOut: reservation.checkOut
+          ? new Date(reservation.checkOut).toISOString().split("T")[0]
+          : "",
+        totalValue:
+          reservation.totalValue !== undefined
+            ? String(reservation.totalValue)
+            : "",
         notes: reservation.notes || "",
         paymentMethod: reservation.paymentMethod || "",
         paymentStatus: reservation.paymentStatus || "",
@@ -60,16 +74,23 @@ export default function AddReservationModal({
           ? new Date(reservation.thirdInstallmentDate).toISOString().split("T")[0]
           : "",
         commissionTotal:
-          reservation.commissionTotal !== undefined && reservation.commissionTotal !== null
+          reservation.commissionTotal !== undefined &&
+          reservation.commissionTotal !== null
             ? String(reservation.commissionTotal)
             : "",
-        cleaningFee: reservation.cleaningFee !== undefined ? String(reservation.cleaningFee) : "",
-        monetaryValue: reservation.monetaryValue !== undefined ? String(reservation.monetaryValue) : "",
+        cleaningFee:
+          reservation.cleaningFee !== undefined
+            ? String(reservation.cleaningFee)
+            : "",
+        monetaryValue:
+          reservation.monetaryValue !== undefined
+            ? String(reservation.monetaryValue)
+            : "",
       });
     }
   }, [reservation]);
 
-  // Buscar próximo código quando for nova reserva
+  // Buscar próximo código
   useEffect(() => {
     const fetchNextCode = async () => {
       if (!reservation) {
@@ -121,11 +142,10 @@ export default function AddReservationModal({
     }
   };
 
-  // Recalcula valor total (valor da reserva + taxa de faxina)
+  // Recalcula valor total
   useEffect(() => {
     const calculateTotalValue = async () => {
       if (!form.propertyId || !form.checkIn || !form.checkOut) return;
-
       try {
         const res = await fetch("/api/reservas/calculate", {
           method: "POST",
@@ -137,10 +157,8 @@ export default function AddReservationModal({
             guestCount: form.guestCount ? parseInt(form.guestCount) : 0,
           }),
         });
-
         if (!res.ok) return;
         const data = await res.json();
-
         if (data && data.totalValue !== undefined) {
           const cleaning = parseFloat(form.cleaningFee || "0");
           const total = parseFloat(data.totalValue) + cleaning;
@@ -150,14 +168,12 @@ export default function AddReservationModal({
         console.error("Erro ao calcular valor:", err);
       }
     };
-
     calculateTotalValue();
   }, [form.propertyId, form.checkIn, form.checkOut, form.guestCount, form.cleaningFee]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     const method = reservation?.id ? "PUT" : "POST";
-
     try {
       const bodyPayload: any = {
         code: form.code,
@@ -176,7 +192,6 @@ export default function AddReservationModal({
         cleaningFee: form.cleaningFee ? parseFloat(form.cleaningFee) : null,
         monetaryValue: form.monetaryValue ? parseFloat(form.monetaryValue) : null,
       };
-
       if (reservation?.id) bodyPayload.id = reservation.id;
 
       const res = await fetch("/api/reservas", {
@@ -212,7 +227,9 @@ export default function AddReservationModal({
           <FaTimes className="w-6 h-6" />
         </button>
 
-        <h2 className="text-xl font-bold mb-4">{reservation ? "Editar Reserva" : "Nova Reserva"}</h2>
+        <h2 className="text-xl font-bold mb-4">
+          {reservation ? "Editar Reserva" : "Nova Reserva"}
+        </h2>
 
         <form onSubmit={handleSubmit} className="space-y-4">
           {/* Código */}
@@ -309,7 +326,49 @@ export default function AddReservationModal({
             />
           </div>
 
-          {/* Taxa de Faxina */}
+          {/* Forma de Pagamento (SELECT) */}
+          <div>
+            <label htmlFor="paymentMethod" className="block text-sm font-medium text-gray-700">
+              Forma de Pagamento
+            </label>
+            <select
+              id="paymentMethod"
+              value={form.paymentMethod}
+              onChange={handleChange}
+              required
+              className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
+            >
+              <option value="">Selecione</option>
+              {paymentMethods.map((m) => (
+                <option key={m} value={m}>
+                  {m}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          {/* Status de Pagamento (SELECT) */}
+          <div>
+            <label htmlFor="paymentStatus" className="block text-sm font-medium text-gray-700">
+              Status de Pagamento
+            </label>
+            <select
+              id="paymentStatus"
+              value={form.paymentStatus}
+              onChange={handleChange}
+              required
+              className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
+            >
+              <option value="">Selecione</option>
+              {paymentStatuses.map((s) => (
+                <option key={s} value={s}>
+                  {s}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          {/* Demais campos como cleaningFee, totalValue, etc. */}
           <div>
             <label htmlFor="cleaningFee" className="block text-sm font-medium text-gray-700">
               Taxa de Faxina
@@ -323,7 +382,6 @@ export default function AddReservationModal({
             />
           </div>
 
-          {/* Valor Total */}
           <div>
             <label htmlFor="totalValue" className="block text-sm font-medium text-gray-700">
               Valor Total
@@ -338,104 +396,6 @@ export default function AddReservationModal({
             />
           </div>
 
-          {/* Valor Comissão */}
-          <div>
-            <label htmlFor="commissionTotal" className="block text-sm font-medium text-gray-700">
-              Valor Comissão
-            </label>
-            <input
-              type="number"
-              id="commissionTotal"
-              value={form.commissionTotal}
-              onChange={handleChange}
-              className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
-            />
-          </div>
-
-          {/* Valor Monetário */}
-          <div>
-            <label htmlFor="monetaryValue" className="block text-sm font-medium text-gray-700">
-              Valor Monetário
-            </label>
-            <input
-              type="number"
-              id="monetaryValue"
-              value={form.monetaryValue}
-              onChange={handleChange}
-              className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
-            />
-          </div>
-
-          {/* Forma Pagamento */}
-          <div>
-            <label htmlFor="paymentMethod" className="block text-sm font-medium text-gray-700">
-              Forma de Pagamento
-            </label>
-            <input
-              type="text"
-              id="paymentMethod"
-              value={form.paymentMethod}
-              onChange={handleChange}
-              className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
-            />
-          </div>
-
-          {/* Status Pagamento */}
-          <div>
-            <label htmlFor="paymentStatus" className="block text-sm font-medium text-gray-700">
-              Status do Pagamento
-            </label>
-            <input
-              type="text"
-              id="paymentStatus"
-              value={form.paymentStatus}
-              onChange={handleChange}
-              className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
-            />
-          </div>
-
-          {/* Segunda Parcela */}
-          <div>
-            <label htmlFor="secondInstallmentDate" className="block text-sm font-medium text-gray-700">
-              Data 2ª Parcela
-            </label>
-            <input
-              type="date"
-              id="secondInstallmentDate"
-              value={form.secondInstallmentDate}
-              onChange={handleChange}
-              className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
-            />
-          </div>
-
-          {/* Terceira Parcela */}
-          <div>
-            <label htmlFor="thirdInstallmentDate" className="block text-sm font-medium text-gray-700">
-              Data 3ª Parcela
-            </label>
-            <input
-              type="date"
-              id="thirdInstallmentDate"
-              value={form.thirdInstallmentDate}
-              onChange={handleChange}
-              className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
-            />
-          </div>
-
-          {/* Observações */}
-          <div>
-            <label htmlFor="notes" className="block text-sm font-medium text-gray-700">
-              Observações
-            </label>
-            <textarea
-              id="notes"
-              value={form.notes}
-              onChange={handleChange}
-              className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
-            />
-          </div>
-
-          {/* Botão Salvar */}
           <div className="flex justify-end">
             <button
               type="submit"
