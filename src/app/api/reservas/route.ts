@@ -8,7 +8,19 @@ export async function GET(req: Request) {
     const propertyId = searchParams.get("propertyId");
 
     const reservations = await prisma.reservation.findMany({
-      where: propertyId ? { propertyId } : {}, // <-- filtra se tiver propertyId
+      where: {
+        AND: [
+          propertyId ? { propertyId } : {},
+          {
+            NOT: {
+              guestName: {
+                equals: "BLOQUEADO",
+                mode: "insensitive", // <-- ignora maiúsculas/minúsculas
+              },
+            },
+          },
+        ],
+      },
       include: { property: true },
       orderBy: { createdAt: "desc" },
     });
