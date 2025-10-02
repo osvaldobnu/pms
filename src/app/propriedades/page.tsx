@@ -30,7 +30,6 @@ export default function PropertiesPage() {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ id, active }),
     });
-
     fetchProperties();
   };
 
@@ -66,6 +65,7 @@ export default function PropertiesPage() {
       sofaBed: property.sofaBed ? String(property.sofaBed) : "",
       singleBed: property.singleBed ? String(property.singleBed) : "",
       lowSeason: String(property.lowSeason),
+      highSeason: String(property.highSeason), // NOVO CAMPO
       holidays: String(property.holidays),
       christmas: String(property.christmas),
       newYear: String(property.newYear),
@@ -111,25 +111,19 @@ export default function PropertiesPage() {
                 <th className="p-3">Hóspedes</th>
                 <th className="p-3">Quartos</th>
                 <th className="p-3">Camas</th>
-                <th className="p-3">Berço</th>
-                <th className="p-3">Criança</th>
-                <th className="p-3">Casal</th>
-                <th className="p-3">Desmontável</th>
-                <th className="p-3">King</th>
-                <th className="p-3">Mezanino</th>
-                <th className="p-3">Queen</th>
-                <th className="p-3">Sofá-Cama</th>
-                <th className="p-3">Individual</th>
+                <th className="p-3">Baixa</th>
+                <th className="p-3">Alta</th>
+                <th className="p-3">Feriados</th>
+                <th className="p-3">Natal</th>
+                <th className="p-3">Réveillon</th>
+                <th className="p-3">Carnaval</th>
                 <th className="p-3">Status</th>
                 <th className="p-3 text-center">Ações</th>
               </tr>
             </thead>
             <tbody>
               {properties.map((property) => (
-                <tr
-                  key={property.id}
-                  className="border-t hover:bg-gray-50 transition-colors"
-                >
+                <tr key={property.id} className="border-t hover:bg-gray-50 transition-colors">
                   <td className="p-3 font-medium">{property.name}</td>
                   <td className="p-3">{property.title}</td>
                   <td className="p-3">{property.phone || "-"}</td>
@@ -137,15 +131,12 @@ export default function PropertiesPage() {
                   <td className="p-3">{property.guests}</td>
                   <td className="p-3">{property.bedrooms}</td>
                   <td className="p-3">{property.beds}</td>
-                  <td className="p-3">{property.crib || "-"}</td>
-                  <td className="p-3">{property.childBed || "-"}</td>
-                  <td className="p-3">{property.doubleBed || "-"}</td>
-                  <td className="p-3">{property.foldingBed || "-"}</td>
-                  <td className="p-3">{property.kingBed || "-"}</td>
-                  <td className="p-3">{property.mezzanineBed || "-"}</td>
-                  <td className="p-3">{property.queenBed || "-"}</td>
-                  <td className="p-3">{property.sofaBed || "-"}</td>
-                  <td className="p-3">{property.singleBed || "-"}</td>
+                  <td className="p-3">{property.lowSeason}</td>
+                  <td className="p-3">{property.highSeason}</td>
+                  <td className="p-3">{property.holidays}</td>
+                  <td className="p-3">{property.christmas}</td>
+                  <td className="p-3">{property.newYear}</td>
+                  <td className="p-3">{property.carnival}</td>
                   <td className="p-3">
                     {property.active ? (
                       <span className="px-2 py-1 text-xs rounded-full bg-green-100 text-green-700">
@@ -164,7 +155,6 @@ export default function PropertiesPage() {
                     >
                       <FaEdit />
                     </button>
-
                     {property.active ? (
                       <button
                         className="text-red-600 hover:text-red-800"
@@ -189,10 +179,7 @@ export default function PropertiesPage() {
       )}
 
       {isModalOpen && (
-        <PropertyModal
-          onClose={handleCloseModal}
-          property={editingProperty || undefined}
-        />
+        <PropertyModal onClose={handleCloseModal} property={editingProperty || undefined} />
       )}
     </main>
   );

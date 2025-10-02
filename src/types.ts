@@ -30,6 +30,7 @@ export interface PropertyForm {
   singleBed?: string;
 
   lowSeason: string;
+  highSeason: string;   // NOVO CAMPO
   holidays: string;
   christmas: string;
   newYear: string;
@@ -67,6 +68,7 @@ export interface PropertyData {
   singleBed?: number;
 
   lowSeason: number;
+  highSeason: number;   // NOVO CAMPO
   holidays: number;
   christmas: number;
   newYear: number;

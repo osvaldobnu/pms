@@ -21,7 +21,7 @@ export async function POST(req: Request) {
         beds: Number(body.beds),
         amenities: body.amenities || null,
         extraGuestFee: body.extraGuestFee ? parseFloat(body.extraGuestFee) : null,
-        cleaningFee: body.cleaningFee ? parseFloat(body.cleaningFee) : null, // NOVO CAMPO
+        cleaningFee: body.cleaningFee ? parseFloat(body.cleaningFee) : null,
         crib: body.crib ? Number(body.crib) : null,
         childBed: body.childBed ? Number(body.childBed) : null,
         doubleBed: body.doubleBed ? Number(body.doubleBed) : null,
@@ -32,6 +32,7 @@ export async function POST(req: Request) {
         sofaBed: body.sofaBed ? Number(body.sofaBed) : null,
         singleBed: body.singleBed ? Number(body.singleBed) : null,
         lowSeason: parseFloat(body.lowSeason),
+        highSeason: parseFloat(body.highSeason), // NOVO CAMPO
         holidays: parseFloat(body.holidays),
         christmas: parseFloat(body.christmas),
         newYear: parseFloat(body.newYear),
@@ -80,7 +81,7 @@ export async function PUT(req: Request) {
         beds: Number(body.beds),
         amenities: body.amenities || null,
         extraGuestFee: body.extraGuestFee ? parseFloat(body.extraGuestFee) : null,
-        cleaningFee: body.cleaningFee ? parseFloat(body.cleaningFee) : null, // NOVO CAMPO
+        cleaningFee: body.cleaningFee ? parseFloat(body.cleaningFee) : null,
         crib: body.crib ? Number(body.crib) : null,
         childBed: body.childBed ? Number(body.childBed) : null,
         doubleBed: body.doubleBed ? Number(body.doubleBed) : null,
@@ -91,6 +92,7 @@ export async function PUT(req: Request) {
         sofaBed: body.sofaBed ? Number(body.sofaBed) : null,
         singleBed: body.singleBed ? Number(body.singleBed) : null,
         lowSeason: parseFloat(body.lowSeason),
+        highSeason: parseFloat(body.highSeason), // NOVO CAMPO
         holidays: parseFloat(body.holidays),
         christmas: parseFloat(body.christmas),
         newYear: parseFloat(body.newYear),

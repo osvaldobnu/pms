@@ -15,7 +15,7 @@ model User {
 }
 
 model Property {
-  id          String   @id @default(cuid())
+  id          String  @id @default(cuid())
   name        String
   title       String
   description String?
@@ -26,58 +26,59 @@ model Property {
   locationNotes String?
   beach         String?
 
-  guests       Int
-  bedrooms     Int
-  beds         Int
-  amenities    String?
+  guests        Int
+  bedrooms      Int
+  beds          Int
+  amenities     String?
   extraGuestFee Float?
 
-  cleaningFee Float?   // NOVO CAMPO
+  cleaningFee Float? // NOVO CAMPO
 
   // Configuração de camas
-  crib            Int?
-  childBed        Int?
-  doubleBed       Int?
-  foldingBed      Int?
-  kingBed         Int?
-  mezzanineBed    Int?
-  queenBed        Int?
-  sofaBed         Int?
-  singleBed       Int?
+  crib         Int?
+  childBed     Int?
+  doubleBed    Int?
+  foldingBed   Int?
+  kingBed      Int?
+  mezzanineBed Int?
+  queenBed     Int?
+  sofaBed      Int?
+  singleBed    Int?
 
-  lowSeason   Float
-  holidays    Float
-  christmas   Float
-  newYear     Float
-  carnival    Float
-  active      Boolean  @default(true)
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  lowSeason  Float
+  highSeason Float    @default(0) // NOVO CAMPO
+  holidays   Float
+  christmas  Float
+  newYear    Float
+  carnival   Float
+  active     Boolean  @default(true)
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
 
   reservations Reservation[]
 }
 
 model Reservation {
-  id         String   @id @default(cuid())
-  code       String   @unique
-  guestName  String
+  id           String  @id @default(cuid())
+  code         String  @unique
+  guestName    String
   contactPhone String?
-  origin     String?
-  guestCount Int?
+  origin       String?
+  guestCount   Int?
 
   checkIn    DateTime
   checkOut   DateTime
   totalValue Float
   notes      String?
 
-  paymentMethod           String?
-  paymentStatus           String?
-  secondInstallmentDate   DateTime?
-  thirdInstallmentDate    DateTime?
-  commissionTotal         Float?
+  paymentMethod         String?
+  paymentStatus         String?
+  secondInstallmentDate DateTime?
+  thirdInstallmentDate  DateTime?
+  commissionTotal       Float?
 
-  cleaningFee Float?     // Taxa de Faxina
-  monetaryValue Float?   // Valor Monetário
+  cleaningFee   Float? // Taxa de Faxina
+  monetaryValue Float? // Valor Monetário
 
   propertyId String
   property   Property @relation(fields: [propertyId], references: [id])

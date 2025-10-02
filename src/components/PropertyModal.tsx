@@ -38,6 +38,7 @@ export default function PropertyModal({ onClose, property }: PropertyModalProps)
     sofaBed: "",
     singleBed: "",
     lowSeason: "",
+    highSeason: "",
     holidays: "",
     christmas: "",
     newYear: "",
@@ -73,6 +74,7 @@ export default function PropertyModal({ onClose, property }: PropertyModalProps)
         sofaBed: property.sofaBed !== undefined && property.sofaBed !== null ? String(property.sofaBed) : "",
         singleBed: property.singleBed !== undefined && property.singleBed !== null ? String(property.singleBed) : "",
         lowSeason: property.lowSeason !== undefined && property.lowSeason !== null ? String(property.lowSeason) : "",
+        highSeason: property.highSeason !== undefined && property.highSeason !== null ? String(property.highSeason) : "",
         holidays: property.holidays !== undefined && property.holidays !== null ? String(property.holidays) : "",
         christmas: property.christmas !== undefined && property.christmas !== null ? String(property.christmas) : "",
         newYear: property.newYear !== undefined && property.newYear !== null ? String(property.newYear) : "",
@@ -333,25 +335,84 @@ export default function PropertyModal({ onClose, property }: PropertyModalProps)
 
           {/* Valores por temporada */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {["lowSeason", "holidays", "christmas", "newYear", "carnival"].map((field) => (
-              <div key={field}>
-                <label htmlFor={field} className="block text-sm font-medium text-gray-700">
-                  {field === "lowSeason" && "Valor Baixa Temporada *"}
-                  {field === "holidays" && "Valor Feriados *"}
-                  {field === "christmas" && "Valor Natal *"}
-                  {field === "newYear" && "Valor Réveillon *"}
-                  {field === "carnival" && "Valor Carnaval *"}
-                </label>
-                <input
-                  type="number"
-                  id={field}
-                  value={(form as any)[field]}
-                  onChange={handleChange}
-                  className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
-                  required
-                />
-              </div>
-            ))}
+            <div>
+              <label htmlFor="lowSeason" className="block text-sm font-medium text-gray-700">
+                Valor Baixa Temporada *
+              </label>
+              <input
+                type="number"
+                id="lowSeason"
+                value={form.lowSeason}
+                onChange={handleChange}
+                className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
+                required
+              />
+            </div>
+            <div>
+              <label htmlFor="highSeason" className="block text-sm font-medium text-gray-700">
+                Valor Alta Temporada *
+              </label>
+              <input
+                type="number"
+                id="highSeason"
+                value={form.highSeason}
+                onChange={handleChange}
+                className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
+                required
+              />
+            </div>
+            <div>
+              <label htmlFor="holidays" className="block text-sm font-medium text-gray-700">
+                Valor Feriados *
+              </label>
+              <input
+                type="number"
+                id="holidays"
+                value={form.holidays}
+                onChange={handleChange}
+                className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
+                required
+              />
+            </div>
+            <div>
+              <label htmlFor="christmas" className="block text-sm font-medium text-gray-700">
+                Valor Natal *
+              </label>
+              <input
+                type="number"
+                id="christmas"
+                value={form.christmas}
+                onChange={handleChange}
+                className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
+                required
+              />
+            </div>
+            <div>
+              <label htmlFor="newYear" className="block text-sm font-medium text-gray-700">
+                Valor Réveillon *
+              </label>
+              <input
+                type="number"
+                id="newYear"
+                value={form.newYear}
+                onChange={handleChange}
+                className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
+                required
+              />
+            </div>
+            <div>
+              <label htmlFor="carnival" className="block text-sm font-medium text-gray-700">
+                Valor Carnaval *
+              </label>
+              <input
+                type="number"
+                id="carnival"
+                value={form.carnival}
+                onChange={handleChange}
+                className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
+                required
+              />
+            </div>
           </div>
 
           {/* Botões */}
