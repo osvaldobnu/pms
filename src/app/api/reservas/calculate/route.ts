@@ -3,23 +3,84 @@ import { prisma } from "../../../_lib/prisma";
 
 // Função auxiliar para identificar se a data é feriado/festa
 function getSeasonRate(property: any, date: Date): number {
-    const month = date.getMonth() + 1; // 1-12
-    const day = date.getDate();
+    const year = date.getFullYear();
 
-    // 🎄 Natal (24 a 25 de dezembro)
-    if (month === 12 && (day === 24 || day === 25)) return property.christmas;
+    // Função auxiliar para comparar datas sem hora
+    const isBetween = (start: string, end: string) => {
+        const d = new Date(date);
+        d.setHours(0, 0, 0, 0);
 
-    // 🎆 Ano Novo (31 de dezembro e 1 de janeiro)
-    if ((month === 12 && day === 31) || (month === 1 && day === 1))
-        return property.newYear;
+        const startDate = new Date(start);
+        startDate.setHours(0, 0, 0, 0);
 
-    // 🎭 Carnaval (exemplo fixo: 10 a 13 de fevereiro - pode ajustar)
-    if (month === 2 && day >= 10 && day <= 13) return property.carnival;
+        const endDate = new Date(end);
+        endDate.setHours(0, 0, 0, 0);
 
-    // 📅 Feriados (simplificado → finais de semana considerados feriado)
-    if (date.getDay() === 0 || date.getDay() === 6) return property.holidays;
+        return d.getTime() >= startDate.getTime() && d.getTime() <= endDate.getTime();
+    };
 
-    // 🌱 Baixa temporada (default)
+    // 🎄 Natal
+    if (
+        (year === 2025 && isBetween("2025-12-22", "2025-12-26")) ||
+        (year === 2026 && isBetween("2026-12-22", "2026-12-26")) ||
+        (year === 2027 && isBetween("2027-12-22", "2027-12-27"))
+    ) return property.christmas;
+
+    // 🥳 Reveillon
+    if (
+        (year === 2025 && isBetween("2025-12-27", "2026-01-04")) ||
+        (year === 2026 && isBetween("2026-12-27", "2027-01-04")) ||
+        (year === 2027 && isBetween("2027-12-27", "2028-01-04"))
+    ) return property.newYear;
+
+    // 🎭 Carnaval
+    if (
+        (year === 2026 && isBetween("2026-02-13", "2026-02-22")) ||
+        (year === 2027 && isBetween("2027-02-05", "2027-02-14")) ||
+        (year === 2025 && isBetween("2025-11-01", "2025-11-03"))
+    ) return property.carnival;
+
+    // 📅 Feriados (outros)
+    // 2025
+    if (
+        (year === 2025 && isBetween("2025-10-10", "2025-10-19")) ||
+        (year === 2025 && isBetween("2025-11-14", "2025-11-16")) ||
+        (year === 2025 && isBetween("2025-11-19", "2025-11-23"))
+    ) return property.holidays;
+
+    // Alta temporada
+    if (
+        (year === 2026 && isBetween("2026-01-05", "2026-01-31")) ||
+        (year === 2027 && isBetween("2027-01-04", "2027-01-31")) ||
+        (year === 2025 && isBetween("2025-10-10", "2025-10-19"))
+    ) return property.highSeason;
+
+    // 2026
+    if (
+        (year === 2026 && isBetween("2026-04-02", "2026-04-05")) ||
+        (year === 2026 && isBetween("2026-04-18", "2026-04-22")) ||
+        (year === 2026 && isBetween("2026-06-03", "2026-06-07")) ||
+        (year === 2026 && isBetween("2026-07-07", "2026-07-24")) ||
+        (year === 2026 && isBetween("2026-09-05", "2026-09-08")) ||
+        (year === 2026 && isBetween("2026-10-10", "2026-10-18")) ||
+        (year === 2026 && isBetween("2026-11-10", "2026-11-16")) ||
+        (year === 2026 && isBetween("2026-11-19", "2026-11-22"))
+    ) return property.holidays;
+
+    // 2027
+    if (
+        (year === 2027 && isBetween("2027-03-25", "2027-03-28")) ||
+        (year === 2027 && isBetween("2027-04-19", "2027-04-25")) ||
+        (year === 2027 && isBetween("2027-05-26", "2027-05-30")) || // Corrigido
+        (year === 2027 && isBetween("2027-07-07", "2027-07-24")) ||
+        (year === 2027 && isBetween("2027-09-06", "2027-09-08")) ||
+        (year === 2027 && isBetween("2027-10-09", "2027-10-17")) ||
+        (year === 2027 && isBetween("2027-11-01", "2027-11-03")) ||
+        (year === 2027 && isBetween("2027-11-13", "2027-11-16")) ||
+        (year === 2027 && isBetween("2027-11-19", "2027-11-21"))
+    ) return property.holidays;
+
+    // 🌱 Baixa temporada
     return property.lowSeason;
 }
 
@@ -47,19 +108,14 @@ export async function POST(req: Request) {
         }
 
         const checkInDate = new Date(checkIn);
-        const checkOutDate = new Date(checkOut);
+        checkInDate.setHours(0, 0, 0, 0);
 
-        if (checkOutDate <= checkInDate) {
-            return NextResponse.json(
-                { error: "Período inválido" },
-                { status: 400 }
-            );
-        }
+        const checkOutDate = new Date(checkOut);
+        checkOutDate.setHours(0, 0, 0, 0);
 
         let totalValue = 0;
         let currentDate = new Date(checkInDate);
 
-        // Itera cada dia da estadia e aplica tarifa correta
         while (currentDate < checkOutDate) {
             totalValue += getSeasonRate(property, currentDate);
             currentDate.setDate(currentDate.getDate() + 1);
