@@ -24,7 +24,10 @@ export default function CalendarPage() {
   const [properties, setProperties] = useState<PropertyData[]>([]);
   const [selectedProperty, setSelectedProperty] = useState("");
   const [reservations, setReservations] = useState<ReservationData[]>([]);
-  const [range, setRange] = useState<DateRange | undefined>({ from: undefined, to: undefined });
+  const [range, setRange] = useState<DateRange | undefined>({
+    from: undefined,
+    to: undefined,
+  });
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   // Buscar propriedades
@@ -48,7 +51,7 @@ export default function CalendarPage() {
     try {
       const res = await fetch(`/api/reservas?propertyId=${selectedProperty}`);
       const data: ReservationData[] = await res.json();
-      setReservations(data.filter(r => !r.canceled));
+      setReservations(data.filter((r) => !r.canceled));
     } catch (err) {
       console.error(err);
     }
@@ -60,9 +63,19 @@ export default function CalendarPage() {
   }, [fetchReservations]);
 
   // Dias bloqueados
-  const blockedDays: Date[] = reservations.flatMap(r =>
-    Array.from({ length: (new Date(r.checkOut).getTime() - new Date(r.checkIn).getTime()) / (1000*60*60*24) + 1 }, (_, i) =>
-      new Date(new Date(r.checkIn).getTime() + i * 24 * 60 * 60 * 1000)
+  const blockedDays: Date[] = reservations.flatMap((r) =>
+    Array.from(
+      {
+        length:
+          (new Date(r.checkOut).getTime() -
+            new Date(r.checkIn).getTime()) /
+          (1000 * 60 * 60 * 24) +
+          1,
+      },
+      (_, i) =>
+        new Date(
+          new Date(r.checkIn).getTime() + i * 24 * 60 * 60 * 1000
+        )
     )
   );
 
@@ -86,9 +99,9 @@ export default function CalendarPage() {
         <h2 className="text-2xl font-semibold text-gray-800">Calendário</h2>
       </div>
 
-      <div className="flex gap-6 max-w-5xl mx-auto">
-        {/* Coluna esquerda */}
-        <div className="w-1/3 flex flex-col gap-4">
+      <div className="max-w-5xl mx-auto flex flex-col gap-6">
+        {/* Linha inteira para selecionar a propriedade */}
+        <div className="flex flex-col gap-4">
           <div>
             <label
               htmlFor="property-select"
@@ -104,7 +117,7 @@ export default function CalendarPage() {
                 className="w-full px-4 py-3 border border-gray-300 rounded-lg pr-10 focus:outline-none focus:ring-2 focus:ring-blue-500 text-lg"
               >
                 <option value="">Selecione uma propriedade</option>
-                {properties.map(p => (
+                {properties.map((p) => (
                   <option key={p.id} value={p.id}>
                     {p.name} ({p.bedrooms} quartos)
                   </option>
@@ -124,18 +137,30 @@ export default function CalendarPage() {
           </button>
         </div>
 
-        {/* Coluna direita */}
-        <div className="w-2/3">
+        {/* Calendário abaixo */}
+        <div className="w-full">
           {selectedProperty && (
             <DayPicker
               mode="range"
               selected={range}
               onSelect={setRange}
               disabled={blockedDays}
-              className="[&_td]:w-full [&_td]:aspect-square [&_td]:text-center [&_th]:text-lg [&_caption]:text-xl"
+              styles={{
+                head_cell: {
+                  width: "100px",
+                },
+                table: {
+                  maxWidth: "none",
+                },
+                day: {
+                  margin: "auto",
+                },
+              }}
+              className="w-full rdp-custom"
               modifiersClassNames={{
                 selected: "bg-green-500 text-white rounded-lg",
-                disabled: "bg-red-300 text-gray-700 line-through rounded-lg",
+                disabled:
+                  "bg-red-300 text-gray-700 line-through rounded-lg",
               }}
             />
           )}
@@ -150,6 +175,16 @@ export default function CalendarPage() {
           initialCheckOut={range.to}
         />
       )}
+
+      {/* CSS inline para ajustar largura do calendário */}
+      <style jsx global>{`
+        .rdp-custom {
+          display: inline-block;
+          font-size: 1rem;
+          --rdp-day-width : 180px;
+          --rdp-day-height : 70px;
+        }
+      `}</style>
     </main>
   );
 }
