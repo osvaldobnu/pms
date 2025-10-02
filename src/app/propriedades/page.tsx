@@ -55,6 +55,7 @@ export default function PropertiesPage() {
       beds: String(property.beds),
       amenities: property.amenities || "",
       extraGuestFee: property.extraGuestFee ? String(property.extraGuestFee) : "",
+      cleaningFee: property.cleaningFee ? String(property.cleaningFee) : "",
       crib: property.crib ? String(property.crib) : "",
       childBed: property.childBed ? String(property.childBed) : "",
       doubleBed: property.doubleBed ? String(property.doubleBed) : "",

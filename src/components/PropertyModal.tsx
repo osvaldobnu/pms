@@ -13,6 +13,7 @@ export default function PropertyModal({ onClose, property }: PropertyModalProps)
   const overlayRef = useRef<HTMLDivElement>(null);
 
   const [form, setForm] = useState<PropertyForm>({
+    id: "",
     name: "",
     title: "",
     description: "",
@@ -45,7 +46,9 @@ export default function PropertyModal({ onClose, property }: PropertyModalProps)
 
   useEffect(() => {
     if (property) {
+
       setForm({
+        id: property.id ?? "",
         name: property.name ?? "",
         title: property.title ?? "",
         description: property.description ?? "",
@@ -59,7 +62,7 @@ export default function PropertyModal({ onClose, property }: PropertyModalProps)
         beds: property.beds !== undefined && property.beds !== null ? String(property.beds) : "",
         amenities: property.amenities ?? "",
         extraGuestFee: property.extraGuestFee !== undefined && property.extraGuestFee !== null ? String(property.extraGuestFee) : "",
-        cleaningFee: property.cleaningFee !== undefined && property.cleaningFee !== null ? String(property.cleaningFee) : "",
+        cleaningFee: property.cleaningFee != null ? String(property.cleaningFee) : "",
         crib: property.crib !== undefined && property.crib !== null ? String(property.crib) : "",
         childBed: property.childBed !== undefined && property.childBed !== null ? String(property.childBed) : "",
         doubleBed: property.doubleBed !== undefined && property.doubleBed !== null ? String(property.doubleBed) : "",
