@@ -49,7 +49,7 @@ export default function CalendarPage() {
     if (!selectedProperty) return;
 
     try {
-      const res = await fetch(`/api/reservas?propertyId=${selectedProperty}`);
+      const res = await fetch(`/api/reservas/todas?propertyId=${selectedProperty}`);
       const data: ReservationData[] = await res.json();
       setReservations(data.filter((r) => !r.canceled));
     } catch (err) {
