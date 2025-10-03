@@ -16,9 +16,8 @@ export interface PropertyForm {
   beds: string;
   amenities?: string;
   extraGuestFee?: string;
-  cleaningFee?: string; // NOVO CAMPO
+  cleaningFee?: string;
 
-  // Configuração de camas
   crib?: string;
   childBed?: string;
   doubleBed?: string;
@@ -30,7 +29,7 @@ export interface PropertyForm {
   singleBed?: string;
 
   lowSeason: string;
-  highSeason: string;   // NOVO CAMPO
+  highSeason: string;
   holidays: string;
   christmas: string;
   newYear: string;
@@ -54,9 +53,8 @@ export interface PropertyData {
   beds: number;
   amenities?: string;
   extraGuestFee?: number;
-  cleaningFee?: number; // NOVO CAMPO
+  cleaningFee?: number;
 
-  // Configuração de camas
   crib?: number;
   childBed?: number;
   doubleBed?: number;
@@ -68,7 +66,7 @@ export interface PropertyData {
   singleBed?: number;
 
   lowSeason: number;
-  highSeason: number;   // NOVO CAMPO
+  highSeason: number;
   holidays: number;
   christmas: number;
   newYear: number;
@@ -90,9 +88,9 @@ export interface ReservationForm {
   paymentStatus?: string;
   secondInstallmentDate?: string;
   thirdInstallmentDate?: string;
-  commissionTotal?: string;
-  cleaningFee?: string;     // Taxa de Faxina
-  monetaryValue?: string;   // Valor Monetário
+  commissionTotal?: string;  // <-- COMISSÃO NOVO
+  cleaningFee?: string;
+  monetaryValue?: string;
 }
 
 export interface ReservationData {
@@ -110,9 +108,9 @@ export interface ReservationData {
   paymentStatus?: string;
   secondInstallmentDate?: string;
   thirdInstallmentDate?: string;
-  commissionTotal?: number;
-  cleaningFee?: number;     // Taxa de Faxina
-  monetaryValue?: number;   // Valor Monetário
+  commissionTotal?: number; // <-- COMISSÃO NOVO
+  cleaningFee?: number;
+  monetaryValue?: number;
   createdAt: string;
   updatedAt: string;
 }
