@@ -62,22 +62,30 @@ export default function CalendarPage() {
     fetchReservations();
   }, [fetchReservations]);
 
-  // Dias bloqueados
-  const blockedDays: Date[] = reservations.flatMap((r) =>
-    Array.from(
-      {
-        length:
-          (new Date(r.checkOut).getTime() -
-            new Date(r.checkIn).getTime()) /
-          (1000 * 60 * 60 * 24) +
-          1,
-      },
-      (_, i) =>
-        new Date(
-          new Date(r.checkIn).getTime() + i * 24 * 60 * 60 * 1000
-        )
-    )
-  );
+  // Função utilitária para converter datas em local time (corrige o bug do dia anterior)
+  const parseLocalDate = (dateStr: string) => {
+    // Extrai apenas a parte da data, ignorando o horário se existir
+    const datePart = dateStr.split("T")[0];
+    const [y, m, d] = datePart.split("-").map(Number);
+    return new Date(y, m - 1, d);
+  };
+
+  // Dias bloqueados (corrigido com fuso horário)
+  const blockedDays: Date[] = reservations.flatMap((r) => {
+    const start = parseLocalDate(r.checkIn);
+    const end = parseLocalDate(r.checkOut);
+
+    const days: Date[] = [];
+    const cur = new Date(start);
+
+    // inclui o último dia — se quiser exclusivo, troque <= por <
+    while (cur <= end) {
+      days.push(new Date(cur));
+      cur.setDate(cur.getDate() + 1);
+    }
+
+    return days;
+  });
 
   const handleOpenModal = () => {
     if (!selectedProperty || !range?.from || !range?.to) {
@@ -100,7 +108,7 @@ export default function CalendarPage() {
       </div>
 
       <div className="max-w-5xl mx-auto flex flex-col gap-6">
-        {/* Linha inteira para selecionar a propriedade */}
+        {/* Seleção da propriedade */}
         <div className="flex flex-col gap-4">
           <div>
             <label
@@ -137,7 +145,7 @@ export default function CalendarPage() {
           </button>
         </div>
 
-        {/* Calendário abaixo */}
+        {/* Calendário */}
         <div className="w-full">
           {selectedProperty && (
             <DayPicker
@@ -159,8 +167,7 @@ export default function CalendarPage() {
               className="w-full rdp-custom"
               modifiersClassNames={{
                 selected: "bg-green-500 text-white rounded-lg",
-                disabled:
-                  "bg-red-300 text-gray-700 line-through rounded-lg",
+                disabled: "bg-red-300 text-gray-700 line-through rounded-lg",
               }}
             />
           )}
@@ -181,8 +188,8 @@ export default function CalendarPage() {
         .rdp-custom {
           display: inline-block;
           font-size: 1rem;
-          --rdp-day-width : 180px;
-          --rdp-day-height : 70px;
+          --rdp-day-width: 180px;
+          --rdp-day-height: 70px;
         }
       `}</style>
     </main>
