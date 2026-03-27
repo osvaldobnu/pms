@@ -1,66 +1,49 @@
-import { PrismaClient, Role, ProductDestination } from '@prisma/client'
+import { PrismaClient, Menu, ProductDestination } from '@prisma/client'
+import bcrypt from 'bcryptjs'
 
 const prisma = new PrismaClient()
 
 async function main() {
-  console.log('🌱 Iniciando seed...')
+  console.log('🌱 Iniciando seed (RBAC)...')
 
-  // 🔥 LIMPAR BANCO (ordem importa por causa das FK)
+  // 🔥 LIMPAR DADOS (ordem correta por FK)
   await prisma.orderItem.deleteMany()
   await prisma.order.deleteMany()
   await prisma.payment.deleteMany()
   await prisma.comanda.deleteMany()
   await prisma.cancelLog.deleteMany()
+
   await prisma.product.deleteMany()
   await prisma.category.deleteMany()
   await prisma.table.deleteMany()
-  await prisma.user.deleteMany()
 
-  // 👤 USUÁRIOS
-  await prisma.user.createMany({
-    data: [
-      {
-        name: 'Administrador',
-        email: 'admin@comanda.com',
-        password: '123456',
-        role: Role.GERENTE,
+  await prisma.user.deleteMany()           // ✅ agora pode
+  await prisma.rolePermission.deleteMany()
+  await prisma.role.deleteMany()
+
+  // 🔐 CRIAR ROLE GERENTE
+  const gerente = await prisma.role.create({
+    data: {
+      name: 'Gerente',
+      permissions: {
+        create: Object.values(Menu).map(menu => ({
+          menu,
+        })),
       },
-      {
-        name: 'Garçom',
-        email: 'garcom@comanda.com',
-        password: '123456',
-        role: Role.GARCOM,
-      },
-      {
-        name: 'Cozinha',
-        email: 'cozinha@comanda.com',
-        password: '123456',
-        role: Role.COZINHA,
-      },
-      {
-        name: 'Bar',
-        email: 'bar@comanda.com',
-        password: '123456',
-        role: Role.BAR,
-      },
-      {
-        name: 'Caixa',
-        email: 'caixa@comanda.com',
-        password: '123456',
-        role: Role.CAIXA,
-      },
-    ],
+    },
   })
 
-  // 🍽️ MESAS
-  for (let i = 1; i <= 20; i++) {
-    await prisma.table.create({
-      data: {
-        number: i,
-        status: 'LIVRE',
-      },
-    })
-  }
+  // 👤 CRIAR USUÁRIO ADMIN
+  const senhaHash = await bcrypt.hash('Brigadeiro2@', 10)
+
+  await prisma.user.create({
+    data: {
+      name: 'Administrador',
+      email: 'osvaldobnu@gmail.com',
+      password: senhaHash,
+      roleId: gerente.id,
+    },
+  })
 
   // 🏷️ CATEGORIAS
   await prisma.category.createMany({

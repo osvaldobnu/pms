@@ -5,15 +5,7 @@ generator client {
 datasource db {
   provider = "postgresql"
   // ⚠️ Se estiver no Prisma 6 (recomendado agora)
-  url = env("DATABASE_URL")
-}
-
-enum Role {
-  GARCOM
-  COZINHA
-  BAR
-  CAIXA
-  GERENTE
+  url      = env("DATABASE_URL")
 }
 
 enum OrderStatus {
@@ -28,26 +20,58 @@ enum PaymentMethod {
   PIX
 }
 
+model Role {
+  id        String   @id @default(uuid())
+  name      String   @unique
+  createdAt DateTime @default(now())
+
+  users       User[]
+  permissions RolePermission[]
+}
+
+model RolePermission {
+  id     String @id @default(uuid())
+  roleId String
+  menu   Menu
+
+  role Role @relation(fields: [roleId], references: [id])
+
+  @@unique([roleId, menu])
+}
+
+enum Menu {
+  DASHBOARD
+  MESAS
+  PRODUCAO
+  COZINHA
+  BAR
+  CAIXA
+  PRODUTOS
+  CATEGORIAS
+  CONFIGURACOES
+}
+
 model User {
   id        String   @id @default(uuid())
   name      String
   email     String   @unique
   password  String
-  role      Role
+  roleId    String? // ✅ opcional por enquanto
   createdAt DateTime @default(now())
 
-  orders    Order[]
-  cancels   CancelLog[]
+  role       Role?       @relation(fields: [roleId], references: [id]) // ✅ EXPLÍCITO
+  orders     Order[]
+  cancelLogs CancelLog[]
 }
 
 model Table {
-  id        String   @id @default(uuid())
-  number    Int      @unique
+  id        String      @id @default(uuid())
+  number    Int         @unique
   status    TableStatus
-  active    Boolean  @default(true)
-  createdAt DateTime @default(now())
+  active    Boolean     @default(true)
+  createdAt DateTime    @default(now())
 
-  comandas  Comanda[]
+  comandas Comanda[]
 }
 
 enum TableStatus {
@@ -56,56 +80,56 @@ enum TableStatus {
 }
 
 model Product {
-  id          String   @id @default(uuid())
+  id          String             @id @default(uuid())
   name        String
   price       Float
-  available   Boolean  @default(true)
+  available   Boolean            @default(true)
   destination ProductDestination @default(COZINHA)
 
   // ✅ TEMPORARIAMENTE OPCIONAL
-  categoryId  String?
-  category    Category? @relation(fields: [categoryId], references: [id])
+  categoryId String?
+  category   Category? @relation(fields: [categoryId], references: [id])
 
-  createdAt   DateTime @default(now())
-  items       OrderItem[]
+  createdAt DateTime    @default(now())
+  items     OrderItem[]
 }
 
 model Comanda {
-  id        String    @id @default(uuid())
+  id        String   @id @default(uuid())
   tableId   String
-  open      Boolean   @default(true)
-  createdAt DateTime  @default(now())
+  open      Boolean  @default(true)
+  createdAt DateTime @default(now())
 
-  table     Table     @relation(fields: [tableId], references: [id])
-  orders    Order[]
-  payments  Payment[]
+  table    Table     @relation(fields: [tableId], references: [id])
+  orders   Order[]
+  payments Payment[]
 }
 
 model Order {
-  id         String      @id @default(uuid())
-  comandaId  String
-  userId     String
-  number     Int         @default(0)
-  status     OrderStatus @default(ENVIADO)
-  createdAt  DateTime    @default(now())
+  id        String      @id @default(uuid())
+  comandaId String
+  userId    String
+  number    Int         @default(0)
+  status    OrderStatus @default(ENVIADO)
+  createdAt DateTime    @default(now())
 
-  comanda    Comanda     @relation(fields: [comandaId], references: [id])
-  user       User        @relation(fields: [userId], references: [id])
-  items      OrderItem[]
+  comanda Comanda     @relation(fields: [comandaId], references: [id])
+  user    User        @relation(fields: [userId], references: [id])
+  items   OrderItem[]
 }
 
 model OrderItem {
   id        String     @id @default(uuid())
-  orderId  String
+  orderId   String
   productId String
-  quantity Int
+  quantity  Int
   note      String?
   price     Float
   status    ItemStatus @default(PENDENTE) // ✅ AQUI
   createdAt DateTime   @default(now())
 
-  order     Order    @relation(fields: [orderId], references: [id])
-  product   Product  @relation(fields: [productId], references: [id])
+  order   Order   @relation(fields: [orderId], references: [id])
+  product Product @relation(fields: [productId], references: [id])
 }
 
 model Payment {
@@ -115,7 +139,7 @@ model Payment {
   amount    Float
   createdAt DateTime      @default(now())
 
-  comanda   Comanda       @relation(fields: [comandaId], references: [id])
+  comanda Comanda @relation(fields: [comandaId], references: [id])
 }
 
 model CancelLog {
@@ -124,7 +148,7 @@ model CancelLog {
   reason    String
   createdAt DateTime @default(now())
 
-  user      User     @relation(fields: [userId], references: [id])
+  user User @relation(fields: [userId], references: [id])
 }
 
 enum ProductDestination {
@@ -147,5 +171,5 @@ model Category {
   createdAt DateTime @default(now())
 
   // ✅ RELAÇÃO OPOSTA (OBRIGATÓRIA NO PRISMA)
-  products  Product[]
+  products Product[]
 }

@@ -1,5 +1,5 @@
 import { ReactNode } from 'react'
-import { contarItensPendentes } from '@/lib/painel'
+import { prisma } from '@/lib/prisma'
 import { getUserFromSession } from '@/lib/auth'
 import ClientLayout from './ClientLayout'
 
@@ -11,13 +11,27 @@ export default async function DashboardLayout({
   const user = await getUserFromSession()
   if (!user) return null
 
-  const pendentesCozinha = await contarItensPendentes('COZINHA')
-  const pendentesBar = await contarItensPendentes('BAR')
-  const pendentesProducao = await contarItensPendentes()
+  const permissions = await prisma.rolePermission.findMany({
+    where: { roleId: user.roleId },
+  })
+
+  const menus = permissions.map(p => p.menu)
+
+  const pendentesCozinha = await prisma.orderItem.count({
+    where: { status: 'EM_PREPARO' },
+  })
+
+  const pendentesBar = await prisma.orderItem.count({
+    where: { status: 'PRONTO' },
+  })
+
+  const pendentesProducao = await prisma.orderItem.count({
+    where: { status: 'PENDENTE' },
+  })
 
   return (
     <ClientLayout
-      role={user.role}
+      menus={menus}
       pendentesCozinha={pendentesCozinha}
       pendentesBar={pendentesBar}
       pendentesProducao={pendentesProducao}

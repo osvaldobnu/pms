@@ -1,8 +1,8 @@
 'use client'
 
 import Link from 'next/link'
-import { ReactNode, useState, useEffect } from 'react'
-import { Role } from '@prisma/client'
+import { ReactNode, useEffect, useState } from 'react'
+import { Menu } from '@prisma/client'
 
 type MenuItemProps = {
   href: string
@@ -39,19 +39,18 @@ function MenuItem({
 }
 
 export default function Sidebar({
-  role,
+  menus,
   pendentesCozinha,
   pendentesBar,
   pendentesProducao,
 }: {
-  role: Role
+  menus: Menu[]
   pendentesCozinha: number
   pendentesBar: number
   pendentesProducao: number
 }) {
   const [collapsed, setCollapsed] = useState(false)
 
-  // ✅ opcional: persiste estado
   useEffect(() => {
     const saved = localStorage.getItem('sidebar-collapsed')
     if (saved) setCollapsed(saved === 'true')
@@ -87,18 +86,16 @@ export default function Sidebar({
       {/* MENU */}
       <nav className="flex-1 px-2 py-4 space-y-1 text-sm">
 
-        {role === Role.GERENTE && (
-          <>
-            <MenuItem
-              href="/dashboard"
-              label="Dashboard"
-              icon={<span>🏠</span>}
-              collapsed={collapsed}
-            />
-          </>
+        {menus.includes(Menu.DASHBOARD) && (
+          <MenuItem
+            href="/dashboard"
+            label="Dashboard"
+            icon={<span>🏠</span>}
+            collapsed={collapsed}
+          />
         )}
 
-        {(role === Role.GERENTE || role === Role.GARCOM) && (
+        {menus.includes(Menu.MESAS) && (
           <MenuItem
             href="/dashboard/mesas"
             label="Mesas"
@@ -107,7 +104,7 @@ export default function Sidebar({
           />
         )}
 
-        {(role === Role.GERENTE || role === Role.COZINHA || role === Role.BAR) && (
+        {menus.includes(Menu.PRODUCAO) && (
           <MenuItem
             href="/dashboard/producao"
             label="Produção"
@@ -117,7 +114,7 @@ export default function Sidebar({
           />
         )}
 
-        {(role === Role.GERENTE || role === Role.COZINHA) && (
+        {menus.includes(Menu.COZINHA) && (
           <MenuItem
             href="/dashboard/cozinha"
             label="Cozinha"
@@ -127,7 +124,7 @@ export default function Sidebar({
           />
         )}
 
-        {(role === Role.GERENTE || role === Role.BAR) && (
+        {menus.includes(Menu.BAR) && (
           <MenuItem
             href="/dashboard/bar"
             label="Bar"
@@ -137,7 +134,7 @@ export default function Sidebar({
           />
         )}
 
-        {(role === Role.GERENTE || role === Role.CAIXA) && (
+        {menus.includes(Menu.CAIXA) && (
           <MenuItem
             href="/dashboard/caixa"
             label="Caixa"
@@ -146,27 +143,31 @@ export default function Sidebar({
           />
         )}
 
-        {role === Role.GERENTE && (
-          <>
-            <div className="border-t border-gray-800 my-3" />
-
-            <MenuItem
-              href="/dashboard/produtos"
-              label="Produtos"
-              icon={<span>📦</span>}
-              collapsed={collapsed}
-            />
-
-            <MenuItem
-              href="/dashboard/categorias"
-              label="Categorias"
-              icon={<span>🏷️</span>}
-              collapsed={collapsed}
-            />
-          </>
+        {(menus.includes(Menu.PRODUTOS) ||
+          menus.includes(Menu.CATEGORIAS) ||
+          menus.includes(Menu.CONFIGURACOES)) && (
+          <div className="border-t border-gray-800 my-3" />
         )}
 
-        {role === Role.GERENTE && (
+        {menus.includes(Menu.PRODUTOS) && (
+          <MenuItem
+            href="/dashboard/produtos"
+            label="Produtos"
+            icon={<span>📦</span>}
+            collapsed={collapsed}
+          />
+        )}
+
+        {menus.includes(Menu.CATEGORIAS) && (
+          <MenuItem
+            href="/dashboard/categorias"
+            label="Categorias"
+            icon={<span>🏷️</span>}
+            collapsed={collapsed}
+          />
+        )}
+
+        {menus.includes(Menu.CONFIGURACOES) && (
           <MenuItem
             href="/dashboard/configuracoes/mesas"
             label="Config. Mesas"
