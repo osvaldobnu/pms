@@ -48,7 +48,9 @@ enum Menu {
   CAIXA
   PRODUTOS
   CATEGORIAS
-  CONFIGURACOES
+  USUARIOS
+  PERFIS
+  CONFIG_MESAS
 }
 
 model User {

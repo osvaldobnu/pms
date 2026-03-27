@@ -4,9 +4,9 @@ import bcrypt from 'bcryptjs'
 const prisma = new PrismaClient()
 
 async function main() {
-  console.log('🌱 Iniciando seed (RBAC)...')
+  console.log('🌱 Iniciando seed (RBAC FINAL)...')
 
-  // 🔥 LIMPAR DADOS (ordem correta por FK)
+  // 🔥 LIMPAR DADOS (ordem correta)
   await prisma.orderItem.deleteMany()
   await prisma.order.deleteMany()
   await prisma.payment.deleteMany()
@@ -17,11 +17,11 @@ async function main() {
   await prisma.category.deleteMany()
   await prisma.table.deleteMany()
 
-  await prisma.user.deleteMany()           // ✅ agora pode
+  await prisma.user.deleteMany()
   await prisma.rolePermission.deleteMany()
   await prisma.role.deleteMany()
 
-  // 🔐 CRIAR ROLE GERENTE
+  // ✅ ROLE GERENTE COM TODOS OS MENUS
   const gerente = await prisma.role.create({
     data: {
       name: 'Gerente',
@@ -33,7 +33,7 @@ async function main() {
     },
   })
 
-  // 👤 CRIAR USUÁRIO ADMIN
+  // 👤 ADMIN
   const senhaHash = await bcrypt.hash('Brigadeiro2@', 10)
 
   await prisma.user.create({
@@ -108,14 +108,9 @@ async function main() {
     ],
   })
 
-  console.log('✅ Seed finalizado com sucesso!')
+  console.log('✅ Seed FINAL executado com sucesso')
 }
 
 main()
-  .catch(e => {
-    console.error('❌ Erro no seed:', e)
-    process.exit(1)
-  })
-  .finally(async () => {
-    await prisma.$disconnect()
-  })
+  .catch(console.error)
+  .finally(() => prisma.$disconnect())

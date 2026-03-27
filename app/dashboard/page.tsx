@@ -14,19 +14,19 @@ export default async function DashboardPage() {
     redirect('/login')
   }
 
-  // ✅ GARANTIR ROLE
+  // ✅ Garantir que o usuário tem perfil
   if (!user.roleId) {
     redirect('/login')
   }
 
-  // ✅ Agora é seguro consultar permissões
+  // ✅ Buscar permissões do perfil
   const permissions = await prisma.rolePermission.findMany({
     where: { roleId: user.roleId },
   })
 
   const menus = permissions.map(p => p.menu)
 
-  // ✅ Redirecionamento baseado em PERMISSÃO
+  // ✅ Redirecionamento inteligente baseado em permissões
   if (!menus.includes(Menu.DASHBOARD)) {
     if (menus.includes(Menu.MESAS)) {
       redirect('/dashboard/mesas')
@@ -41,13 +41,19 @@ export default async function DashboardPage() {
     }
   }
 
-  // ✅ APÓS ISSO, É DASHBOARD (ADMIN)
+  // ✅ A PARTIR DAQUI: APENAS QUEM TEM DASHBOARD
   const mesasOcupadas = await prisma.table.count({
-    where: { active: true, status: 'OCUPADA' },
+    where: {
+      active: true,
+      status: 'OCUPADA',
+    },
   })
 
   const mesasLivres = await prisma.table.count({
-    where: { active: true, status: 'LIVRE' },
+    where: {
+      active: true,
+      status: 'LIVRE',
+    },
   })
 
   const itensEmPreparo = await prisma.orderItem.count({

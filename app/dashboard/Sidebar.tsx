@@ -64,9 +64,8 @@ export default function Sidebar({
 
   return (
     <aside
-      className={`bg-gray-900 text-white flex flex-col transition-all duration-300
-        ${collapsed ? 'w-20' : 'w-64'}
-      `}
+      className={`bg-gray-900 text-white flex flex-col transition-all duration-300 ${collapsed ? 'w-20' : 'w-64'
+        }`}
     >
       {/* HEADER */}
       <div className="px-4 py-5 border-b border-gray-800 flex items-center justify-between">
@@ -85,7 +84,6 @@ export default function Sidebar({
 
       {/* MENU */}
       <nav className="flex-1 px-2 py-4 space-y-1 text-sm">
-
         {menus.includes(Menu.DASHBOARD) && (
           <MenuItem
             href="/dashboard"
@@ -143,11 +141,21 @@ export default function Sidebar({
           />
         )}
 
+        {menus.includes(Menu.CONFIG_MESAS) && (
+          <MenuItem
+            href="/dashboard/configuracoes/mesas"
+            label="Config. Mesas"
+            icon={<span>🛠️</span>}
+            collapsed={collapsed}
+          />
+        )}
+
         {(menus.includes(Menu.PRODUTOS) ||
           menus.includes(Menu.CATEGORIAS) ||
-          menus.includes(Menu.CONFIGURACOES)) && (
-          <div className="border-t border-gray-800 my-3" />
-        )}
+          menus.includes(Menu.USUARIOS) ||
+          menus.includes(Menu.PERFIS)) && (
+            <div className="border-t border-gray-800 my-3" />
+          )}
 
         {menus.includes(Menu.PRODUTOS) && (
           <MenuItem
@@ -167,10 +175,19 @@ export default function Sidebar({
           />
         )}
 
-        {menus.includes(Menu.CONFIGURACOES) && (
+        {menus.includes(Menu.USUARIOS) && (
           <MenuItem
-            href="/dashboard/configuracoes/mesas"
-            label="Config. Mesas"
+            href="/dashboard/usuarios"
+            label="Usuários"
+            icon={<span>👥</span>}
+            collapsed={collapsed}
+          />
+        )}
+
+        {menus.includes(Menu.PERFIS) && (
+          <MenuItem
+            href="/dashboard/perfis"
+            label="Perfis"
             icon={<span>🛠️</span>}
             collapsed={collapsed}
           />
