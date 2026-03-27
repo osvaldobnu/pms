@@ -2,7 +2,6 @@ import { NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 
 export async function POST(req: Request) {
-  console.log("POST INICIADO")
   const body = await req.json()
 
   const email = String(body.email ?? '').trim()
@@ -24,12 +23,22 @@ export async function POST(req: Request) {
     )
   }
 
-  // ✅ COOKIE TEM QUE SER SETADO NO RESPONSE
   const response = NextResponse.json({ success: true })
 
+  // ✅ COOKIE DE SESSÃO
   response.cookies.set('userId', user.id, {
     httpOnly: true,
     path: '/',
+    sameSite: 'lax',
+    secure: true, // Railway é HTTPS
+  })
+
+  // ✅ COOKIE DO PAPEL (ESSENCIAL)
+  response.cookies.set('userRole', user.role, {
+    httpOnly: true,
+    path: '/',
+    sameSite: 'lax',
+    secure: true,
   })
 
   return response
