@@ -8,26 +8,40 @@ export default async function DashboardPage() {
   noStore()
 
   const user = await getUserFromSession()
-  if (!user) redirect('/login')
 
-  // Buscar permissões do usuário
+  // 🔐 Segurança básica
+  if (!user) {
+    redirect('/login')
+  }
+
+  // ✅ GARANTIR ROLE
+  if (!user.roleId) {
+    redirect('/login')
+  }
+
+  // ✅ Agora é seguro consultar permissões
   const permissions = await prisma.rolePermission.findMany({
     where: { roleId: user.roleId },
   })
 
   const menus = permissions.map(p => p.menu)
 
-  // Redirecionamento baseado em permissão
+  // ✅ Redirecionamento baseado em PERMISSÃO
   if (!menus.includes(Menu.DASHBOARD)) {
-    if (menus.includes(Menu.MESAS)) redirect('/dashboard/mesas')
-    if (menus.includes(Menu.CAIXA)) redirect('/dashboard/caixa')
-    if (menus.includes(Menu.PRODUCAO)) redirect('/dashboard/producao')
+    if (menus.includes(Menu.MESAS)) {
+      redirect('/dashboard/mesas')
+    }
+
+    if (menus.includes(Menu.CAIXA)) {
+      redirect('/dashboard/caixa')
+    }
+
+    if (menus.includes(Menu.PRODUCAO)) {
+      redirect('/dashboard/producao')
+    }
   }
 
-  // DASHBOARD (ADMIN)
-  const hoje = new Date()
-  hoje.setHours(0, 0, 0, 0)
-
+  // ✅ APÓS ISSO, É DASHBOARD (ADMIN)
   const mesasOcupadas = await prisma.table.count({
     where: { active: true, status: 'OCUPADA' },
   })
