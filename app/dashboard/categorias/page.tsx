@@ -2,10 +2,49 @@ import { prisma } from '@/lib/prisma'
 import Link from 'next/link'
 import CategoriasClient from './categorias-client'
 
-export default async function CategoriasPage() {
-  const categorias = await prisma.category.findMany({
-    orderBy: { name: 'asc' },
-  })
+type Props = {
+  searchParams: Promise<{
+    q?: string
+    status?: 'ativa' | 'inativa'
+    page?: string
+  }>
+}
+
+export default async function CategoriasPage({ searchParams }: Props) {
+  const params = await searchParams
+
+  const q = params.q ?? ''
+  const status = params.status
+  const page = Number(params.page ?? '1')
+
+  const perPage = 10
+  const skip = (page - 1) * perPage
+
+  const where: any = {}
+
+  if (q) {
+    where.name = { contains: q, mode: 'insensitive' }
+  }
+
+  if (status === 'ativa') {
+    where.active = true
+  }
+
+  if (status === 'inativa') {
+    where.active = false
+  }
+
+  const [categorias, total] = await Promise.all([
+    prisma.category.findMany({
+      where,
+      skip,
+      take: perPage,
+      orderBy: { name: 'asc' },
+    }),
+    prisma.category.count({ where }),
+  ])
+
+  const totalPages = Math.ceil(total / perPage)
 
   return (
     <div>
@@ -20,7 +59,14 @@ export default async function CategoriasPage() {
         </Link>
       </div>
 
-      <CategoriasClient categorias={categorias} />
+      <CategoriasClient
+        categorias={categorias}
+        total={total}
+        totalPages={totalPages}
+        currentPage={page}
+        q={q}
+        status={status}
+      />
     </div>
   )
 }
