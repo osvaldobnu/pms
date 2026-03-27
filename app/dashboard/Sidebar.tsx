@@ -168,12 +168,15 @@ export default function Sidebar({
 
         <div className="border-t border-gray-800 my-3" />
 
-        <MenuItem
-          href="/api/logout"
-          label="Sair"
-          icon={<span>🚪</span>}
-          collapsed={collapsed}
-        />
+        <button
+          onClick={() => {
+            window.location.href = '/api/logout'
+          }}
+          className="flex items-center gap-3 w-full px-4 py-2 text-gray-400 hover:bg-gray-800 hover:text-white rounded-lg"
+        >
+          <span>🚪</span>
+          {!collapsed && <span>Sair</span>}
+        </button>
       </nav>
     </aside>
   )
