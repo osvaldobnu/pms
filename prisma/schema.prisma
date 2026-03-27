@@ -39,6 +39,8 @@ model RolePermission {
   @@unique([roleId, menu])
 }
 
+
+
 enum Menu {
   DASHBOARD
   MESAS
@@ -53,6 +55,7 @@ enum Menu {
   CONFIG_MESAS
 }
 
+
 model User {
   id        String   @id @default(uuid())
   name      String
@@ -60,6 +63,7 @@ model User {
   password  String
   roleId    String? // ✅ opcional por enquanto
   createdAt DateTime @default(now())
+  active    Boolean  @default(true) // ✅ NOVO
 
   role       Role?       @relation(fields: [roleId], references: [id]) // ✅ EXPLÍCITO
   orders     Order[]

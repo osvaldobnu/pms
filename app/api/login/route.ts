@@ -8,12 +8,17 @@ export async function POST(req: Request) {
   const email = String(body.email ?? '').trim()
   const password = String(body.password ?? '').trim()
 
+  // 🔍 Buscar usuário pelo email (ativo OU inativo)
   const user = await prisma.user.findFirst({
     where: {
-      email: { equals: email, mode: 'insensitive' },
+      email: {
+        equals: email,
+        mode: 'insensitive',
+      },
     },
   })
 
+  // ❌ Email não encontrado
   if (!user) {
     return NextResponse.json(
       { error: 'Credenciais inválidas' },
@@ -21,6 +26,15 @@ export async function POST(req: Request) {
     )
   }
 
+  // ❌ Usuário inativo
+  if (!user.active) {
+    return NextResponse.json(
+      { error: 'Usuário desativado. Contate o administrador.' },
+      { status: 403 }
+    )
+  }
+
+  // 🔐 Validar senha
   const senhaOk = await bcrypt.compare(password, user.password)
   if (!senhaOk) {
     return NextResponse.json(
@@ -29,9 +43,9 @@ export async function POST(req: Request) {
     )
   }
 
+  // ✅ Login OK
   const response = NextResponse.json({ success: true })
 
-  // ✅ COOKIE ÚNICO E CORRETO
   response.cookies.set('userId', user.id, {
     httpOnly: true,
     path: '/',

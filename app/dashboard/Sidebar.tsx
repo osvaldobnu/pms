@@ -179,7 +179,7 @@ export default function Sidebar({
           <MenuItem
             href="/dashboard/perfis"
             label="Perfis"
-            icon={<span>🛠️</span>}
+            icon={<span>🧑‍💼</span>}
             collapsed={collapsed}
           />
         )}
