@@ -141,15 +141,6 @@ export default function Sidebar({
           />
         )}
 
-        {menus.includes(Menu.CONFIG_MESAS) && (
-          <MenuItem
-            href="/dashboard/configuracoes/mesas"
-            label="Config. Mesas"
-            icon={<span>🛠️</span>}
-            collapsed={collapsed}
-          />
-        )}
-
         {(menus.includes(Menu.PRODUTOS) ||
           menus.includes(Menu.CATEGORIAS) ||
           menus.includes(Menu.USUARIOS) ||
@@ -188,6 +179,15 @@ export default function Sidebar({
           <MenuItem
             href="/dashboard/perfis"
             label="Perfis"
+            icon={<span>🛠️</span>}
+            collapsed={collapsed}
+          />
+        )}
+
+        {menus.includes(Menu.CONFIG_MESAS) && (
+          <MenuItem
+            href="/dashboard/configuracoes/mesas"
+            label="Config. Mesas"
             icon={<span>🛠️</span>}
             collapsed={collapsed}
           />
