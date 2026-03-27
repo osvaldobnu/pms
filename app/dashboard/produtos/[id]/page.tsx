@@ -43,7 +43,7 @@ export default async function EditarProdutoPage({
 
       <select
         name="categoryId"
-        defaultValue={produto.categoryId}
+        defaultValue={produto.categoryId ?? ''}
         className="w-full border p-2"
       >
         {categorias.map((cat : any) => (
