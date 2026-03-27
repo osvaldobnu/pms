@@ -166,6 +166,15 @@ export default function Sidebar({
           </>
         )}
 
+        {role === Role.GERENTE && (
+          <MenuItem
+            href="/dashboard/configuracoes/mesas"
+            label="Config. Mesas"
+            icon={<span>🛠️</span>}
+            collapsed={collapsed}
+          />
+        )}
+
         <div className="border-t border-gray-800 my-3" />
 
         <button

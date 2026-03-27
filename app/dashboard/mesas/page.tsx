@@ -3,6 +3,7 @@ import Link from 'next/link'
 
 export default async function MesasPage() {
   const mesas = await prisma.table.findMany({
+    where: { active: true },
     orderBy: { number: 'asc' },
   })
 
@@ -26,7 +27,9 @@ export default async function MesasPage() {
                 }
               `}
             >
-              <div className="text-lg font-bold">Mesa {mesa.number}</div>
+              <div className="text-lg font-bold">
+                Mesa {mesa.number}
+              </div>
               <div className="text-sm mt-1">
                 {ocupada ? 'Ocupada' : 'Livre'}
               </div>

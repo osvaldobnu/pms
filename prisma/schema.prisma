@@ -43,10 +43,16 @@ model User {
 model Table {
   id        String   @id @default(uuid())
   number    Int      @unique
-  status    String
+  status    TableStatus
+  active    Boolean  @default(true)
   createdAt DateTime @default(now())
 
   comandas  Comanda[]
+}
+
+enum TableStatus {
+  LIVRE
+  OCUPADA
 }
 
 model Product {

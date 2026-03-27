@@ -2,8 +2,12 @@ import { prisma } from '@/lib/prisma'
 import { getUserFromSession } from '@/lib/auth'
 import { redirect } from 'next/navigation'
 import { Role } from '@prisma/client'
+import { unstable_noStore as noStore } from 'next/cache'
 
 export default async function DashboardPage() {
+  // ✅ DESATIVA CACHE
+  noStore()
+
   const user = await getUserFromSession()
 
   if (!user) redirect('/login')
@@ -20,14 +24,20 @@ export default async function DashboardPage() {
   hoje.setHours(0, 0, 0, 0)
 
   /* ──────────────────────
-     🪑 MESAS
+     🪑 MESAS (APENAS ATIVAS)
   ────────────────────── */
   const mesasOcupadas = await prisma.table.count({
-    where: { status: 'OCUPADA' },
+    where: {
+      active: true,
+      status: 'OCUPADA',
+    },
   })
 
   const mesasLivres = await prisma.table.count({
-    where: { status: 'LIVRE' },
+    where: {
+      active: true,
+      status: 'LIVRE',
+    },
   })
 
   /* ──────────────────────
@@ -107,8 +117,6 @@ export default async function DashboardPage() {
 
   return (
     <div className="space-y-8">
-
-      {/* ───────── CARDS ───────── */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         <Card title="🪑 Mesas">
           <p>{mesasOcupadas} ocupadas</p>
@@ -125,7 +133,6 @@ export default async function DashboardPage() {
         </Card>
       </div>
 
-      {/* ───────── ALERTAS ───────── */}
       <div className="space-y-2">
         {itensProntosDetalhe > 0 && (
           <Alert>
@@ -140,18 +147,23 @@ export default async function DashboardPage() {
         ))}
       </div>
 
-      {/* ───────── RESUMO DO DIA ───────── */}
       <div>
-        <h2 className="text-xl font-bold mb-2">📊 Resumo de hoje</h2>
-        <p>💰 Total: R$ {(totalDia._sum.amount || 0).toFixed(2)}</p>
+        <h2 className="text-xl font-bold mb-2">
+          📊 Resumo de hoje
+        </h2>
+        <p>
+          💰 Total: R$ {(totalDia._sum.amount || 0).toFixed(2)}
+        </p>
         <p>📦 Pedidos: {pedidosDia}</p>
-        {produtoTop && <p>🔥 Mais vendido: {produtoTop.name}</p>}
+        {produtoTop && (
+          <p>🔥 Mais vendido: {produtoTop.name}</p>
+        )}
       </div>
     </div>
   )
 }
 
-/* ───────── COMPONENTES SIMPLES ───────── */
+/* COMPONENTES */
 
 function Card({
   title,
