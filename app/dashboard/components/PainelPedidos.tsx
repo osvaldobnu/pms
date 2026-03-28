@@ -40,7 +40,7 @@ export default async function PainelPedidos({
             className="bg-white rounded-lg shadow p-4"
           >
             <div className="font-bold text-lg">
-              Pedido #{order.number} — Mesa {order.comanda.table.number}
+              Mesa {order.comanda.table.number}
             </div>
 
             <div className="text-sm text-gray-500 mb-2">

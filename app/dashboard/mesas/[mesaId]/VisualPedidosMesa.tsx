@@ -48,10 +48,6 @@ export default function VisualPedidosMesa({
           key={pedido.id}
           className="bg-white rounded shadow p-4"
         >
-          {/* CABEÇALHO */}
-          <div className="font-bold text-lg">
-            Pedido #{pedido.number}
-          </div>
 
           <div className="text-sm text-gray-500 mb-4">
             {new Date(pedido.createdAt).toLocaleString('pt-BR', {

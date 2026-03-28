@@ -51,7 +51,7 @@ export default function ListaPedidosPorItem({
         return (
           <div key={order.id} className="bg-white p-4 rounded shadow">
             <div className="font-bold text-lg">
-              Pedido #{order.number} — Mesa {order.comanda.table.number}
+              Mesa {order.comanda.table.number}
             </div>
 
             <div className="text-sm text-gray-500 mb-3">
