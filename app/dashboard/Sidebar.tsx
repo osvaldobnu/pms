@@ -196,8 +196,9 @@ export default function Sidebar({
         <div className="border-t border-gray-800 my-3" />
 
         <button
-          onClick={() => {
-            window.location.href = '/api/logout'
+          onClick={async () => {
+            await fetch('/api/logout', { method: 'POST' })
+            window.location.href = '/login'
           }}
           className="flex items-center gap-3 w-full px-4 py-2 text-gray-400 hover:bg-gray-800 hover:text-white rounded-lg"
         >
