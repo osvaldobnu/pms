@@ -2,11 +2,11 @@ import { NextResponse } from 'next/server'
 import type { NextRequest } from 'next/server'
 
 export function GET(request: NextRequest) {
-  const response = NextResponse.redirect(
-    new URL('/login', request.url)
-  )
+  const url = new URL('/login', request.nextUrl.origin)
 
-  // 🔥 Apaga cookies de sessão
+  const response = NextResponse.redirect(url)
+
+  // 🔥 Remove cookies de sessão
   response.cookies.delete('userId')
   response.cookies.delete('userRole')
 
