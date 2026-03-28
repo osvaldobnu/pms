@@ -30,12 +30,27 @@ export default async function DashboardLayout({
   const menus = permissions.map(p => p.menu)
 
   // Contadores
+  // Contadores
   const pendentesCozinha = await prisma.orderItem.count({
-    where: { status: 'EM_PREPARO' },
+    where: {
+      status: {
+        in: ['PENDENTE', 'EM_PREPARO'],
+      },
+      product: {
+        destination: 'COZINHA',
+      },
+    },
   })
 
   const pendentesBar = await prisma.orderItem.count({
-    where: { status: 'PRONTO' },
+    where: {
+      status: {
+        in: ['PENDENTE', 'EM_PREPARO'],
+      },
+      product: {
+        destination: 'BAR',
+      },
+    },
   })
 
   const pendentesProducao = await prisma.orderItem.count({
