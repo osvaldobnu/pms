@@ -39,8 +39,6 @@ model RolePermission {
   @@unique([roleId, menu])
 }
 
-
-
 enum Menu {
   DASHBOARD
   MESAS
@@ -54,7 +52,6 @@ enum Menu {
   PERFIS
   CONFIG_MESAS
 }
-
 
 model User {
   id        String   @id @default(uuid())
@@ -106,10 +103,10 @@ model Comanda {
   open      Boolean  @default(true)
   createdAt DateTime @default(now())
 
-  table    Table     @relation(fields: [tableId], references: [id])
+  table    Table        @relation(fields: [tableId], references: [id])
   orders   Order[]
   payments Payment[]
-  pessoas  MesaPessoa[]   // ✅ NOVO
+  pessoas  MesaPessoa[] // ✅ NOVO
 }
 
 model Order {
@@ -132,7 +129,7 @@ model MesaPessoa {
   active    Boolean  @default(true)
   createdAt DateTime @default(now())
 
-  comanda Comanda   @relation(fields: [comandaId], references: [id])
+  comanda Comanda     @relation(fields: [comandaId], references: [id])
   itens   OrderItem[]
 }
 
@@ -146,11 +143,13 @@ model OrderItem {
   status    ItemStatus @default(PENDENTE)
   createdAt DateTime   @default(now())
 
-  pessoaMesaId String?        // ✅ NOVO
+  pessoaMesaId String?
   pessoaMesa   MesaPessoa? @relation(fields: [pessoaMesaId], references: [id])
 
   order   Order   @relation(fields: [orderId], references: [id])
   product Product @relation(fields: [productId], references: [id])
+
+  cancelLogs CancelLog[] // ✅ ESTA LINHA
 }
 
 model Payment {
@@ -161,15 +160,6 @@ model Payment {
   createdAt DateTime      @default(now())
 
   comanda Comanda @relation(fields: [comandaId], references: [id])
-}
-
-model CancelLog {
-  id        String   @id @default(uuid())
-  userId    String
-  reason    String
-  createdAt DateTime @default(now())
-
-  user User @relation(fields: [userId], references: [id])
 }
 
 enum ProductDestination {
@@ -194,4 +184,15 @@ model Category {
 
   // ✅ RELAÇÃO OPOSTA (OBRIGATÓRIA NO PRISMA)
   products Product[]
+}
+
+model CancelLog {
+  id          String   @id @default(uuid())
+  userId      String
+  orderItemId String
+  reason      String
+  createdAt   DateTime @default(now())
+
+  user      User      @relation(fields: [userId], references: [id])
+  orderItem OrderItem @relation(fields: [orderItemId], references: [id])
 }
