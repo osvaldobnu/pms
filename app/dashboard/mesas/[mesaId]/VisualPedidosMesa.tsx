@@ -46,10 +46,8 @@ function StatusBadge({ status }: { status: string }) {
 
 export default function VisualPedidosMesa({
   pedidos,
-  userId,
 }: {
   pedidos: any[]
-  userId: string
 }) {
   const [cancelando, setCancelando] = useState<string | null>(null)
   const [motivo, setMotivo] = useState('')
