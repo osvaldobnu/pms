@@ -2,13 +2,13 @@ import { prisma } from '@/lib/prisma'
 import { getOrCreateComanda } from '@/lib/actions/comandas'
 import Link from 'next/link'
 import VisualPedidosMesa from './VisualPedidosMesa'
+import EncerrarMesaButton from './EncerrarMesaButton'
 
 export default async function ComandaPage({
   params,
 }: {
   params: Promise<{ mesaId: string }>
 }) {
-  // ✅ Next 16: params é Promise
   const { mesaId } = await params
 
   const mesa = await prisma.table.findUnique({
@@ -31,28 +31,35 @@ export default async function ComandaPage({
     orderBy: { createdAt: 'asc' },
   })
 
+  const temPedidos = pedidos.length > 0
+
   return (
     <div>
-      {/* TÍTULO */}
       <h1 className="text-2xl font-bold mb-2">
         Mesa {mesa.number}
       </h1>
 
       <p className="text-gray-500 mb-4">
-        Comanda aberta
+        {mesa.status === 'OCUPADA'
+          ? 'Comanda aberta'
+          : 'Mesa livre'}
       </p>
 
-      {/* ✅ BOTÃO ADICIONAR PEDIDO */}
-      <div className="mb-6">
+      {/* ✅ AÇÕES */}
+      <div className="mb-6 flex gap-3">
         <Link
           href={`/dashboard/mesas/${mesa.id}/novo-pedido`}
           className="inline-block bg-black text-white px-4 py-2 rounded hover:bg-gray-900 transition"
         >
           ➕ Adicionar Pedido
         </Link>
+
+        <EncerrarMesaButton
+          mesaId={mesa.id}
+          disabled={temPedidos}
+        />
       </div>
 
-      {/* ✅ VISUAL DOS PEDIDOS POR STATUS */}
       <VisualPedidosMesa pedidos={pedidos} />
     </div>
   )

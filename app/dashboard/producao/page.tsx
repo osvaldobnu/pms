@@ -10,7 +10,7 @@ export default async function ProducaoPage() {
       comanda: { include: { table: true } },
       items: { include: { product: true } },
     },
-    orderBy: { createdAt: 'asc' },
+    orderBy: { createdAt: 'desc' },
   })
 
   return (

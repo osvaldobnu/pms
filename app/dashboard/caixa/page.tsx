@@ -5,11 +5,15 @@ export default async function CaixaPage() {
   const comandas = await prisma.comanda.findMany({
     where: { open: true },
     include: {
-      table: true,
+      table: true, // ✅ só a mesa
+      pessoas: true, // ✅ pessoas DA COMANDA
       orders: {
         include: {
           items: {
-            include: { product: true },
+            include: {
+              product: true,
+              pessoaMesa: true,
+            },
           },
         },
       },

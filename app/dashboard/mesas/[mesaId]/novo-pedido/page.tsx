@@ -33,6 +33,13 @@ export default async function NovoPedidoPage({
     orderBy: [{ destination: 'asc' }, { name: 'asc' }],
   })
 
+  const pessoasMesa = await prisma.mesaPessoa.findMany({
+    where: {
+      comandaId: comanda.id, // ✅ AGORA É POR COMANDA
+      active: true,
+    },
+    orderBy: { createdAt: 'asc' },
+  })
 
   const user = await getUserFromSession()
 
@@ -40,12 +47,13 @@ export default async function NovoPedidoPage({
     return <div>Usuário não autenticado</div>
   }
 
-
   return (
     <NovoPedido
       produtos={produtos}
       comandaId={comanda.id}
+      mesaId={mesa.id}
       userId={user.id}
+      pessoasMesa={pessoasMesa}
     />
   )
 }
