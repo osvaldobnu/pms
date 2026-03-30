@@ -150,11 +150,17 @@ export default function NovoPedido({
 
             <input
               type="number"
+              inputMode="numeric"
+              pattern="[0-9]*"
               min={0}
-              className="w-20 border p-1"
+              value={quantidades[produto.id] ?? 0}
               onChange={e =>
-                alterarQuantidade(produto.id, Number(e.target.value))
+                alterarQuantidade(
+                  produto.id,
+                  Number(e.target.value)
+                )
               }
+              className="w-20 border p-1 text-center"
             />
           </div>
         ))}
