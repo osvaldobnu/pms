@@ -53,6 +53,12 @@ export default function VisualPedidosMesa({
   const [motivo, setMotivo] = useState('')
 
   function tentarCancelar(item: any) {
+    if (item.status !== 'PENDENTE') {
+      alert(
+        'Este item não pode ser cancelado porque já está em andamento.'
+      )
+      return
+    }
     setCancelando(item.id)
   }
 
@@ -70,7 +76,7 @@ export default function VisualPedidosMesa({
 
       setCancelando(null)
       setMotivo('')
-      location.reload() // mantém simples para visão de mesa
+      location.reload()
     } catch (e: any) {
       alert(e.message)
     }
@@ -78,25 +84,30 @@ export default function VisualPedidosMesa({
 
   return (
     <div className="space-y-6">
-      {pedidos.map(pedido => (
-        <div
-          key={pedido.id}
-          className="bg-white rounded shadow p-4"
-        >
-          <div className="text-sm text-gray-500 mb-4">
-            {new Date(pedido.createdAt).toLocaleString('pt-BR')}
-          </div>
+      {pedidos.map(pedido => {
+        // ✅ filtra apenas itens visíveis
+        const itensVisiveis = pedido.items.filter(
+          (item: any) =>
+            item.status !== 'CANCELADO' &&
+            item.status !== 'ENTREGUE'
+        )
 
-          <ul className="space-y-2">
-            {pedido.items.map((item: any) => {
-              if (
-                item.status === 'CANCELADO' ||
-                item.status === 'ENTREGUE'
-              ) {
-                return null
-              }
+        // ✅ se não sobrou nenhum item, NÃO mostra o pedido
+        if (itensVisiveis.length === 0) {
+          return null
+        }
 
-              return (
+        return (
+          <div
+            key={pedido.id}
+            className="bg-white rounded shadow p-4"
+          >
+            <div className="text-sm text-gray-500 mb-4">
+              {new Date(pedido.createdAt).toLocaleString('pt-BR')}
+            </div>
+
+            <ul className="space-y-2">
+              {itensVisiveis.map((item: any) => (
                 <li
                   key={item.id}
                   className="flex justify-between items-center border rounded px-3 py-2"
@@ -150,11 +161,11 @@ export default function VisualPedidosMesa({
                     </button>
                   </div>
                 </li>
-              )
-            })}
-          </ul>
-        </div>
-      ))}
+              ))}
+            </ul>
+          </div>
+        )
+      })}
 
       {pedidos.length === 0 && (
         <p className="text-gray-400">
@@ -162,7 +173,7 @@ export default function VisualPedidosMesa({
         </p>
       )}
 
-      {/* MODAL DE CANCELAMENTO */}
+      {/* MODAL */}
       {cancelando && (
         <div className="fixed inset-0 bg-black/40 flex items-center justify-center">
           <div className="bg-white p-4 rounded w-80">
