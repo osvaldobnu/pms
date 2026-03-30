@@ -34,7 +34,6 @@ export default function Producao({
     try {
       await cancelarItem({
         orderItemId: cancelando!,
-        userId,
         reason: motivo,
       })
 
