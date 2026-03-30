@@ -36,7 +36,11 @@ export async function fecharPessoa({
   const pendentes = await prisma.orderItem.count({
     where: {
       pessoaMesaId,
-      status: { not: 'ENTREGUE' },
+
+      status: {
+        notIn: ['ENTREGUE', 'CANCELADO'],
+      },
+
     },
   })
 

@@ -1,22 +1,40 @@
 import { prisma } from '@/lib/prisma'
-import ListaPedidosPorItem from '../components/ListaPedidosPorItem'
+import { getUserFromSession } from '@/lib/auth'
+import Producao from './Producao'
 
 export default async function ProducaoPage() {
-  const pedidos = await prisma.order.findMany({
+  const user = await getUserFromSession()
+
+  const itens = await prisma.orderItem.findMany({
     where: {
-      status: { in: ['ENVIADO', 'EM_PREPARO'] },
+
+      status: {
+        notIn: ['ENTREGUE', 'CANCELADO'],
+      },
+
     },
     include: {
-      comanda: { include: { table: true } },
-      items: { include: { product: true } },
+      product: true,
+      order: {
+        include: {
+          comanda: {
+            include: {
+              table: true,
+            },
+          },
+        },
+      },
     },
-    orderBy: { createdAt: 'desc' },
+    orderBy: { createdAt: 'asc' },
   })
 
   return (
     <div>
-      <h1 className="text-2xl font-bold mb-4">🔥🍸 Produção</h1>
-      <ListaPedidosPorItem pedidos={pedidos} filtroDestino="TODOS" />
+      <h1 className="text-2xl font-bold mb-4">
+        🔥 Produção
+      </h1>
+
+      <Producao itens={itens} userId={user!.id} />
     </div>
   )
 }

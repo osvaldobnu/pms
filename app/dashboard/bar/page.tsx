@@ -2,21 +2,39 @@ import { prisma } from '@/lib/prisma'
 import ListaPedidosPorItem from '../components/ListaPedidosPorItem'
 
 export default async function BarPage() {
-  const pedidos = await prisma.order.findMany({
+  const itens = await prisma.orderItem.findMany({
     where: {
-      status: { in: ['ENVIADO', 'EM_PREPARO'] },
+      status: {
+        notIn: ['ENTREGUE', 'CANCELADO'],
+      },
+      product: {
+        destination: 'BAR',
+      },
     },
     include: {
-      comanda: { include: { table: true } },
-      items: { include: { product: true } },
+      product: true,
+      order: {
+        include: {
+          comanda: {
+            include: {
+              table: true,
+            },
+          },
+        },
+      },
     },
-    orderBy: { createdAt: 'desc' },
+    orderBy: {
+      createdAt: 'asc',
+    },
   })
 
   return (
     <div>
-      <h1 className="text-2xl font-bold mb-4">🍸 Bar</h1>
-      <ListaPedidosPorItem pedidos={pedidos} filtroDestino="BAR" />
+      <h1 className="text-2xl font-bold mb-4">
+        🍸 Bar
+      </h1>
+
+      <ListaPedidosPorItem itens={itens} />
     </div>
   )
 }

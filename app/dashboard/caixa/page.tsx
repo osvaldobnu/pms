@@ -3,13 +3,20 @@ import CaixaClient from './CaixaClient'
 
 export default async function CaixaPage() {
   const comandas = await prisma.comanda.findMany({
-    where: { open: true },
+    where: {
+      open: true,
+    },
     include: {
-      table: true, // ✅ só a mesa
-      pessoas: true, // ✅ pessoas DA COMANDA
+      table: true, // ✅ ESSENCIAL (estava faltando)
+      pessoas: true,
       orders: {
         include: {
           items: {
+            where: {
+              status: {
+                notIn: ['ENTREGUE', 'CANCELADO'], // ✅ ignora cancelados
+              },
+            },
             include: {
               product: true,
               pessoaMesa: true,
@@ -18,7 +25,9 @@ export default async function CaixaPage() {
         },
       },
     },
-    orderBy: { createdAt: 'asc' },
+    orderBy: {
+      createdAt: 'asc',
+    },
   })
 
   return (
