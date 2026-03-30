@@ -13,6 +13,7 @@ export async function criarPedido({
     productId: string
     quantity: number
     note?: string
+    pessoaMesaId: string // ✅ OBRIGATÓRIO AGORA
   }[]
 }) {
   return prisma.$transaction(async tx => {
@@ -23,9 +24,15 @@ export async function criarPedido({
 
     const nextNumber = lastOrder ? lastOrder.number + 1 : 1
 
-    // ✅ 1. BUSCAR PRODUTOS E CALCULAR PREÇO FORA DO CREATE
+    // ✅ 1. BUSCAR PRODUTOS E CALCULAR PREÇO
     const itemsComPreco = await Promise.all(
       items.map(async item => {
+        if (!item.pessoaMesaId) {
+          throw new Error(
+            'Todo pedido precisa estar associado a uma pessoa'
+          )
+        }
+
         const produto = await tx.product.findUnique({
           where: { id: item.productId },
         })
@@ -38,12 +45,13 @@ export async function criarPedido({
           productId: item.productId,
           quantity: item.quantity,
           note: item.note,
-          price: produto.price * item.quantity, // ✅ VALOR FINAL CORRETO
+          price: produto.price * item.quantity,
+          pessoaMesaId: item.pessoaMesaId, // ✅ AGORA SALVA
         }
       })
     )
 
-    // ✅ 2. CREATE SÓ COM OBJETOS JÁ PRONTOS
+    // ✅ 2. CREATE DO PEDIDO + ITENS
     return tx.order.create({
       data: {
         comandaId,
