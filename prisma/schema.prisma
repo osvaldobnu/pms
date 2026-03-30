@@ -183,6 +183,7 @@ enum ItemStatus {
   EM_PREPARO
   PRONTO
   ENTREGUE
+  CANCELADO   // ✅ NOVO
 }
 
 model Category {
