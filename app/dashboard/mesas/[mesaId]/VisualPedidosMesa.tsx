@@ -1,6 +1,8 @@
 'use client'
 
+import { useState } from 'react'
 import { atualizarStatusItem } from '@/lib/actions/itens'
+import { cancelarItem } from '@/lib/actions/cancelar-item'
 
 function StatusBadge({ status }: { status: string }) {
   const base =
@@ -31,6 +33,12 @@ function StatusBadge({ status }: { status: string }) {
           📦 Entregue
         </span>
       )
+    case 'CANCELADO':
+      return (
+        <span className={`${base} bg-gray-100 text-gray-400`}>
+          🚫 Cancelado
+        </span>
+      )
     default:
       return null
   }
@@ -38,9 +46,38 @@ function StatusBadge({ status }: { status: string }) {
 
 export default function VisualPedidosMesa({
   pedidos,
+  userId,
 }: {
   pedidos: any[]
+  userId: string
 }) {
+  const [cancelando, setCancelando] = useState<string | null>(null)
+  const [motivo, setMotivo] = useState('')
+
+  function tentarCancelar(item: any) {
+    setCancelando(item.id)
+  }
+
+  async function confirmarCancelamento() {
+    if (!motivo.trim()) {
+      alert('Informe o motivo do cancelamento')
+      return
+    }
+
+    try {
+      await cancelarItem({
+        orderItemId: cancelando!,
+        reason: motivo,
+      })
+
+      setCancelando(null)
+      setMotivo('')
+      location.reload() // mantém simples para visão de mesa
+    } catch (e: any) {
+      alert(e.message)
+    }
+  }
+
   return (
     <div className="space-y-6">
       {pedidos.map(pedido => (
@@ -48,62 +85,120 @@ export default function VisualPedidosMesa({
           key={pedido.id}
           className="bg-white rounded shadow p-4"
         >
-
           <div className="text-sm text-gray-500 mb-4">
-            {new Date(pedido.createdAt).toLocaleString('pt-BR', {
-              day: '2-digit',
-              month: '2-digit',
-              year: 'numeric',
-              hour: '2-digit',
-              minute: '2-digit',
-              second: '2-digit',
-            })}
+            {new Date(pedido.createdAt).toLocaleString('pt-BR')}
           </div>
 
-          {/* ITENS */}
           <ul className="space-y-2">
-            {pedido.items.map((item: any) => (
-              <li
-                key={item.id}
-                className="flex justify-between items-center border rounded px-3 py-2"
-              >
-                <div>
-                  <div className="font-medium">
-                    {item.quantity}× {item.product.name}
-                  </div>
-                  <div className="mt-1">
-                    <StatusBadge status={item.status} />
-                  </div>
-                </div>
+            {pedido.items.map((item: any) => {
+              if (
+                item.status === 'CANCELADO' ||
+                item.status === 'ENTREGUE'
+              ) {
+                return null
+              }
 
-                {/* ✅ AÇÃO SUTIL DO GARÇOM */}
-                {item.status === 'PRONTO' && (
-                  <button
-                    onClick={() =>
-                      atualizarStatusItem(item.id, 'ENTREGUE')
-                    }
-                    className="
-                      inline-flex items-center gap-1
-                      text-xs font-medium
-                      px-2 py-1
-                      rounded
-                      bg-gray-100 text-gray-700
-                      hover:bg-gray-200
-                      transition
-                    "
-                    title="Marcar como entregue"
-                  >
-                    ✔ Marcar Entregue
-                  </button>
-                )}
-              </li>
-            ))}
+              return (
+                <li
+                  key={item.id}
+                  className="flex justify-between items-center border rounded px-3 py-2"
+                >
+                  <div>
+                    <div className="font-medium">
+                      {item.quantity}× {item.product.name}
+                    </div>
+                    <div className="mt-1">
+                      <StatusBadge status={item.status} />
+                    </div>
+                  </div>
+
+                  <div className="flex gap-2">
+                    {item.status === 'PRONTO' && (
+                      <button
+                        onClick={() =>
+                          atualizarStatusItem(
+                            item.id,
+                            'ENTREGUE'
+                          )
+                        }
+                        className="
+                          inline-flex items-center gap-1
+                          text-xs font-medium
+                          px-2 py-1
+                          rounded
+                          bg-gray-100 text-gray-700
+                          hover:bg-gray-200
+                          transition
+                        "
+                      >
+                        ✔ Marcar Entregue
+                      </button>
+                    )}
+
+                    {/* ✅ CANCELAR SEMPRE VISÍVEL */}
+                    <button
+                      onClick={() => tentarCancelar(item)}
+                      className="
+                        inline-flex items-center gap-1
+                        text-xs font-medium
+                        px-2 py-1
+                        rounded
+                        bg-red-100 text-red-700
+                        hover:bg-red-200
+                        transition
+                      "
+                    >
+                      ✖ Cancelar
+                    </button>
+                  </div>
+                </li>
+              )
+            })}
           </ul>
         </div>
       ))}
 
       {pedidos.length === 0 && (
-        <p className="text-gray-400">Nenhum pedido ainda</p>
+        <p className="text-gray-400">
+          Nenhum pedido ainda
+        </p>
+      )}
+
+      {/* MODAL DE CANCELAMENTO */}
+      {cancelando && (
+        <div className="fixed inset-0 bg-black/40 flex items-center justify-center">
+          <div className="bg-white p-4 rounded w-80">
+            <h3 className="font-semibold mb-2">
+              Cancelar item
+            </h3>
+
+            <textarea
+              value={motivo}
+              onChange={e => setMotivo(e.target.value)}
+              placeholder="Informe o motivo"
+              className="border w-full p-2 text-sm mb-3"
+            />
+
+            <div className="flex justify-end gap-2">
+              <button
+                className="px-3 py-1 border rounded"
+                onClick={() => {
+                  setCancelando(null)
+                  setMotivo('')
+                }}
+              >
+                Voltar
+              </button>
+
+              <button
+                className="px-3 py-1 bg-red-600 text-white rounded"
+                onClick={confirmarCancelamento}
+              >
+                Confirmar Cancelamento
+              </button>
+            </div>
+          </div>
+        </div>
       )}
     </div>
   )

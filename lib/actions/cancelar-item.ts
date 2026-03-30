@@ -1,16 +1,21 @@
 'use server'
 
 import { prisma } from '@/lib/prisma'
+import { getUserFromSession } from '@/lib/auth'
 
 export async function cancelarItem({
   orderItemId,
-  userId,
   reason,
 }: {
   orderItemId: string
-  userId: string
   reason: string
 }) {
+  const user = await getUserFromSession()
+
+  if (!user) {
+    throw new Error('Usuário não autenticado')
+  }
+
   const item = await prisma.orderItem.findUnique({
     where: { id: orderItemId },
   })
@@ -19,24 +24,18 @@ export async function cancelarItem({
     throw new Error('Item não encontrado')
   }
 
-  if (item.status !== 'PENDENTE') {
-    throw new Error('Este item não pode mais ser cancelado')
-  }
-
-  // ✅ Registra o cancelamento
+  // ✅ Registra o cancelamento com o usuário correto
   await prisma.cancelLog.create({
     data: {
-      userId,
+      userId: user.id,
       orderItemId,
       reason,
     },
   })
 
-  // ✅ Marca item como CANCELADO
+  // ✅ Marca como CANCELADO
   await prisma.orderItem.update({
     where: { id: orderItemId },
-    data: {
-      status: 'CANCELADO',
-    },
+    data: { status: 'CANCELADO' },
   })
 }

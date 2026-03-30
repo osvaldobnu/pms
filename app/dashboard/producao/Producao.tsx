@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { cancelarItem } from '@/lib/actions/cancelar-item'
+import { atualizarStatusItem } from '@/lib/actions/itens'
 
 export default function Producao({
   itens,
@@ -19,6 +20,10 @@ export default function Producao({
   const [motivo, setMotivo] = useState('')
 
   const router = useRouter()
+
+  function tentarCancelar(item: any) {
+    setCancelando(item.id)
+  }
 
   async function confirmarCancelamento() {
     if (!motivo.trim()) {
@@ -41,8 +46,17 @@ export default function Producao({
     }
   }
 
+  const itensFiltrados = itens.filter(item => {
+    if (filtro === 'TODOS') return true
+    return item.product.destination === filtro
+  })
+
   return (
     <div>
+      <h1 className="text-2xl font-bold mb-4">
+        🔥🍸 Produção
+      </h1>
+
       {/* FILTROS */}
       <div className="flex gap-2 mb-6">
         {['TODOS', 'COZINHA', 'BAR'].map(f => (
@@ -60,53 +74,91 @@ export default function Producao({
         ))}
       </div>
 
-      {/* ITENS */}
+      {/* LISTA DE ITENS */}
       <div className="space-y-3">
-        {itens
-          .filter(i => {
-            if (filtro === 'TODOS') return true
-            return i.product.destination === filtro
-          })
-          .map(item => (
-            <div
-              key={item.id}
-              className="bg-white p-4 rounded shadow flex justify-between"
-            >
-              <div>
-                <div className="font-bold">
-                  Mesa {item.order.comanda.table.number}
-                </div>
-
-                <div className="text-sm">
-                  {item.quantity}× {item.product.name}
-                </div>
-
-                <div className="text-xs text-gray-500">
-                  {new Date(
-                    item.createdAt
-                  ).toLocaleString('pt-BR')}
-                </div>
+        {itensFiltrados.map(item => (
+          <div
+            key={item.id}
+            className="bg-white p-4 rounded shadow flex justify-between items-center"
+          >
+            <div>
+              <div className="font-bold">
+                Mesa {item.order.comanda.table.number}
               </div>
 
+              <div className="text-sm">
+                {item.quantity}× {item.product.name}
+              </div>
+
+              <div className="text-xs text-gray-500">
+                {new Date(item.createdAt).toLocaleString('pt-BR')}
+              </div>
+
+              <div className="text-xs mt-1">
+                Status:{' '}
+                <strong>{item.status}</strong>
+              </div>
+            </div>
+
+            <div className="flex gap-2">
               {item.status === 'PENDENTE' && (
                 <button
-                  className="text-red-600 text-sm underline"
-                  onClick={() => setCancelando(item.id)}
+                  onClick={() =>
+                    atualizarStatusItem(
+                      item.id,
+                      'EM_PREPARO'
+                    )
+                  }
+                  className="px-2 py-1 bg-yellow-500 text-white rounded text-sm"
                 >
-                  Cancelar
+                  Iniciar
                 </button>
               )}
-            </div>
-          ))}
 
-        {itens.length === 0 && (
+              {item.status === 'EM_PREPARO' && (
+                <button
+                  onClick={() =>
+                    atualizarStatusItem(item.id, 'PRONTO')
+                  }
+                  className="px-2 py-1 bg-green-600 text-white rounded text-sm"
+                >
+                  Pronto
+                </button>
+              )}
+
+              {item.status === 'PRONTO' && (
+                <button
+                  onClick={() =>
+                    atualizarStatusItem(
+                      item.id,
+                      'ENTREGUE'
+                    )
+                  }
+                  className="px-2 py-1 bg-blue-600 text-white rounded text-sm"
+                >
+                  Entregar
+                </button>
+              )}
+
+              {/* ✅ CANCELAR SEMPRE VISÍVEL */}
+              <button
+                onClick={() => tentarCancelar(item)}
+                className="px-2 py-1 bg-red-600 text-white rounded text-sm"
+              >
+                Cancelar
+              </button>
+            </div>
+          </div>
+        ))}
+
+        {itensFiltrados.length === 0 && (
           <p className="text-gray-500">
             Nenhum pedido pendente
           </p>
         )}
       </div>
 
-      {/* MODAL */}
+      {/* MODAL DE CANCELAMENTO */}
       {cancelando && (
         <div className="fixed inset-0 bg-black/40 flex items-center justify-center">
           <div className="bg-white p-4 rounded w-80">
@@ -136,7 +188,7 @@ export default function Producao({
                 className="px-3 py-1 bg-red-600 text-white rounded"
                 onClick={confirmarCancelamento}
               >
-                Cancelar Pedido
+                Confirmar Cancelamento
               </button>
             </div>
           </div>
