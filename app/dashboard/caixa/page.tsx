@@ -14,7 +14,7 @@ export default async function CaixaPage() {
           items: {
             where: {
               status: {
-                notIn: ['ENTREGUE', 'CANCELADO'], // ✅ ignora cancelados
+                not: 'CANCELADO', // ✅ NÃO excluir ENTREGUE
               },
             },
             include: {
@@ -22,18 +22,18 @@ export default async function CaixaPage() {
               pessoaMesa: true,
             },
           },
-        },
       },
     },
+  },
     orderBy: {
-      createdAt: 'asc',
-    },
+    createdAt: 'asc',
+  },
   })
 
-  return (
-    <div>
-      <h1 className="text-2xl font-bold mb-6">Caixa</h1>
-      <CaixaClient comandas={comandas} />
-    </div>
-  )
+return (
+  <div>
+    <h1 className="text-2xl font-bold mb-6">Caixa</h1>
+    <CaixaClient comandas={comandas} />
+  </div>
+)
 }
