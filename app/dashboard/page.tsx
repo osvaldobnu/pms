@@ -62,7 +62,11 @@ export default async function DashboardPage() {
 
   const pedidosEmAndamento = await prisma.orderItem.findMany({
     where: {
-      status: { not: 'ENTREGUE' },
+
+      status: {
+        notIn: ['ENTREGUE', 'CANCELADO'],
+      },
+
     },
     include: {
       product: true,
