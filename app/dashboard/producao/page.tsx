@@ -30,10 +30,6 @@ export default async function ProducaoPage() {
 
   return (
     <div>
-      <h1 className="text-2xl font-bold mb-4">
-        🔥 Produção
-      </h1>
-
       <Producao itens={itens} userId={user!.id} />
     </div>
   )

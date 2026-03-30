@@ -31,7 +31,7 @@ export default async function BarPage() {
   return (
     <div>
       <h1 className="text-2xl font-bold mb-4">
-        🍸 Bar
+        Bar
       </h1>
 
       <ListaPedidosPorItem itens={itens} />

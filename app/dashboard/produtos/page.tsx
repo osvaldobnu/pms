@@ -61,7 +61,7 @@ export default async function ProdutosPage({ searchParams }: Props) {
   return (
     <div>
       <div className="flex justify-between items-center mb-6">
-        <h1 className="text-2xl font-bold">📦 Produtos</h1>
+        <h1 className="text-2xl font-bold">Produtos</h1>
 
         <Link
           href="/dashboard/produtos/novo"

@@ -49,7 +49,7 @@ export default async function CategoriasPage({ searchParams }: Props) {
   return (
     <div>
       <div className="flex justify-between items-center mb-6">
-        <h1 className="text-2xl font-bold">🏷️ Categorias</h1>
+        <h1 className="text-2xl font-bold">Categorias</h1>
 
         <Link
           href="/dashboard/categorias/nova"

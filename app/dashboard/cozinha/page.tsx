@@ -31,7 +31,7 @@ export default async function CozinhaPage() {
   return (
     <div>
       <h1 className="text-2xl font-bold mb-4">
-        🔥 Cozinha
+        Cozinha
       </h1>
 
       <ListaPedidosPorItem itens={itens} />
