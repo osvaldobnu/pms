@@ -64,7 +64,7 @@ export function Hero() {
                 >
 
                     <div className="relative">
-                        <div className="absolute inset-0 bg-emerald-300 rounded-full blur-3xl opacity-30" />
+                        <div className="absolute inset-0 bg-emerald-300 rounded-full opacity-30" />
 
                         <Image
                             src="https://images.pexels.com/photos/3768916/pexels-photo-3768916.jpeg"
