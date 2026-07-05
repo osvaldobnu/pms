@@ -105,10 +105,8 @@ export function DiagnosticForm() {
         </div>
       </div>
 
-      <motion.div
+      <div
         key={step}
-        initial={{ opacity: 0, y: 15 }}
-        animate={{ opacity: 1, y: 0 }}
         className="
           bg-white
           rounded-[40px]
@@ -358,7 +356,7 @@ export function DiagnosticForm() {
             </button>
           </>
         )}
-      </motion.div>
+      </div>
     </div>
   );
 }
