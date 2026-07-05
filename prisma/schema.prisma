@@ -1,0 +1,46 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Goal {
+  WEIGHT_LOSS
+  MUSCLE_GAIN
+  MAINTAIN
+}
+
+model DietPlan {
+  id String @id @default(uuid())
+
+  nome String
+  email String
+
+  idade Int?
+
+  pesoAtual Float?
+  altura Float?
+
+  pesoMeta Float?
+
+  objetivo Goal
+
+  exercicios String?
+
+  caloriasEstimadas Int?
+
+  tempoEstimado String?
+
+  plano Json
+
+  emailEnviado Boolean @default(false)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([email])
+  @@index([createdAt])
+}
