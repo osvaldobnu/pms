@@ -175,7 +175,7 @@ export function DiagnosticForm() {
             }
 
             <button
-              onClick={next}
+              onClick={() => {alert("oi"); next()}}
               onTouchStart={next}
               className="
                 mt-6
