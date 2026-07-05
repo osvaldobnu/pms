@@ -170,6 +170,7 @@ export function DiagnosticForm() {
 
             <button
               onClick={next}
+              onTouchStart={next}
               className="
                 mt-6
                 w-full
@@ -244,6 +245,7 @@ export function DiagnosticForm() {
 
               <button
                 onClick={next}
+                onTouchStart={next}
                 className="
                   cursor-pointer 
                   flex-1
@@ -311,6 +313,7 @@ export function DiagnosticForm() {
 
               <button
                 onClick={next}
+                onTouchStart={next}
                 className="
                   cursor-pointer
                   flex-1
