@@ -55,6 +55,9 @@ export function DiagnosticForm() {
 
   const next = () => {
     if (!validateStep()) {
+
+      alert(JSON.stringify(form, null, 2));
+
       setError("Preencha todos os campos para continuar.");
       return;
     }
@@ -126,6 +129,7 @@ export function DiagnosticForm() {
 
             <input
               placeholder="Nome"
+              type="text"
               className="w-full mt-6 p-4 rounded-xl border"
               value={form.nome}
               onChange={(e) =>
@@ -138,6 +142,7 @@ export function DiagnosticForm() {
 
             <input
               placeholder="Email"
+              type="email"
               className="w-full mt-4 p-4 rounded-xl border"
               value={form.email}
               onChange={(e) =>
@@ -150,6 +155,7 @@ export function DiagnosticForm() {
 
             <input
               placeholder="Idade"
+              type="number"
               className="w-full mt-4 p-4 rounded-xl border"
               value={form.idade}
               onChange={(e) =>
@@ -194,6 +200,7 @@ export function DiagnosticForm() {
 
             <input
               placeholder="Peso Atual"
+              type="number"
               className="w-full mt-6 p-4 rounded-xl border"
               value={form.peso}
               onChange={(e) =>
@@ -206,6 +213,7 @@ export function DiagnosticForm() {
 
             <input
               placeholder="Altura"
+              type="number"
               className="w-full mt-4 p-4 rounded-xl border"
               value={form.altura}
               onChange={(e) =>
@@ -218,6 +226,7 @@ export function DiagnosticForm() {
 
             <input
               placeholder="Meta de Peso"
+              type="number"
               className="w-full mt-4 p-4 rounded-xl border"
               value={form.meta}
               onChange={(e) =>
