@@ -11,7 +11,7 @@ export function Hero() {
             <div className="blob blob-2" />
 
             <div className="section-container relative z-10 grid lg:grid-cols-2 gap-10 items-center px-6 py-20">
-                <motion.div
+                <div
                     initial={{ opacity: 0,}}
                     animate={{ opacity: 1}}
                 >
@@ -54,9 +54,9 @@ export function Hero() {
                             Saiba Mais
                         </a>
                     </div>
-                </motion.div>
+                </div>
 
-                <motion.div
+                <div
                     initial={{ opacity: 0, x: 30 }}
                     animate={{ opacity: 1, x: 0 }}
                     transition={{ duration: 0.6 }}
@@ -75,7 +75,7 @@ export function Hero() {
                         />
                     </div>
 
-                </motion.div>
+                </div>
             </div>
         </section>
     );
