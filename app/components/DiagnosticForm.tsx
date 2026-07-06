@@ -175,19 +175,6 @@ export function DiagnosticForm() {
             }
 
             <button
-              style={{
-                background: "red",
-                width: "100%",
-                height: "80px",
-                position: "relative",
-                zIndex: 99999,
-              }}
-              onClick={() => alert("clicou")}
-            >
-              TESTE
-            </button>
-
-            <button
               onClick={() => { alert("oi"); next() }}
               onTouchStart={next}
               className="
